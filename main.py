@@ -54,7 +54,6 @@ def get_et():
     ET.append(Task(tET2, 114,5000,ET,6,2575))
     return ET
 
-
 def schedule():
     """
     TT = Time Triggered
