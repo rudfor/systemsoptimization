@@ -7,7 +7,7 @@ import libraries as libs
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-def schedule(TT, ET, time_limit=10000):
+def EDF_Simulator(TT, ET, time_limit=10000):
     """
     TT = Time Triggered
     ET = Event Triggerd
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     print(f"{time_triggered_task}")
 
     # Get schadule table and worst-case response times
-    schedule, WCRT = schedule(time_triggered_task, [])
+    schedule, WCRT = EDF_Simulator(time_triggered_task, [])
 
     libs.Functions.printSchedule(schedule)
 
