@@ -75,7 +75,6 @@ def EDF_Simulator(TT, ET, time_limit=10000):
             # Since we execute the task in the current second then we
             # reduce by one time second the remaining duration of the task
             ti.duration -= 1
-            TT = libs.Functions.update_duration(TT, ti)
 
         # Tick the clock
         t += 1
