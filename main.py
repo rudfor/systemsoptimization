@@ -1,4 +1,5 @@
 import sys
+import copy
 import libraries as libs
 
 # This is a sample Python script.
@@ -69,7 +70,7 @@ def schedule(TT, ET, time_limit=10000):
 
             # Add task to the current second in the schedule
             # print(f"add to schedule {ti.name} at {t}")
-            schedule[t] = ti
+            schedule[t] = copy.deepcopy(ti)
 
             # Since we execute the task in the current second then we
             # reduce by one time second the remaining duration of the task
