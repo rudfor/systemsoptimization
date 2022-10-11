@@ -1,3 +1,8 @@
+import sys
+import os
+# this adds the main folder into this test scope so it will run as if in root
+sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
+
 import main
 import libraries as libs
 from unittest import TestCase
