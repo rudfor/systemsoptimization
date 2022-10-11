@@ -7,7 +7,7 @@ class TaskModel:
     """
     def __init__(self, name, duration, period, type, priority, deadline, separation = 0):
         self.name = name
-        self.duration = int(duration) # ci
+        self.duration = int(duration) # ci computation
         self.init_duration = int(duration) # Ci
         self.period = int(period)     # Ti
         self.type = type

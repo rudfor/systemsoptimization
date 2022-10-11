@@ -16,7 +16,7 @@ def schedule(TT, ET, time_limit=10000):
     WCET = Worst Case Execution Time
     pi => task priority
     Di => relative deadline
-    Ci => Compution time
+    Ci => Compution time (duration)
     TT => Ti Period
     EF => Ti Sporadic
     :param T:
@@ -57,7 +57,7 @@ def schedule(TT, ET, time_limit=10000):
                 T.r = t
                 T.duration = T.init_duration
                 T.deadline = T.init_deadline + t
-                print(T.name, T.duration, T.init_deadline, T.deadline, t)
+                print('reset on period', T.name, T.duration, T.init_deadline, T.deadline, t)
 
         # Check if there is any tasks with computation left
         if all(task.duration == 0 for task in TT):
@@ -82,8 +82,9 @@ def schedule(TT, ET, time_limit=10000):
     # If at least one task has its duration more than 0 that indicates
     # that at least one task is not completed and therefore the schedule
     # is infeasible for the given combination of tasks in the given time limit.
-    if any(task.duration >= 0 for task in TT):
-        libs.Debug_Output.message(f"Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
+    if any(task.duration > 0 for task in TT):
+        for T in TT:
+            libs.Debug_Output.message(f"Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
         sys.exit(1)
 
     # print(f"{schedule}")
@@ -106,5 +107,7 @@ if __name__ == '__main__':
 
     # Get schadule table and worst-case response times
     schedule, WCRT = schedule(time_triggered_task, [])
+
+    libs.Functions.printSchedule(schedule)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
