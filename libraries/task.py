@@ -20,4 +20,4 @@ class TaskModel:
         self.wcrt = 0
 
 def get_idle():
-    return TaskModel('iddle', -1, -1, 'Idle', -1, -1)
+    return TaskModel('idle', -1, -1, 'Idle', -1, -1)
