@@ -1,0 +1,4 @@
+name,duration,period,type,priority,deadline,separation
+tTT0,55,2000,TT,7,2000,0
+tTT1,45,4000,TT,7,4000,0
+tET0,25,3000,ET,5,1845,1
