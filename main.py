@@ -8,6 +8,7 @@ import libraries as libs
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+# algorithm 1
 def schedulingTT(TT, time_limit=10000):
     """
     Data: TT task set TT T including polling server tasks T poll
@@ -37,7 +38,7 @@ def schedulingTT(TT, time_limit=10000):
     schedule = [0] * time_limit
 
     # We go through each time slot in until we reach the time limit
-    forceBreak = 50000
+    watchDog = 50000
     while t < time_limit:
         # print(f"EDF: {libs.Functions.edf(t, TT.tasks).name}")
         for T in TT:
@@ -82,10 +83,10 @@ def schedulingTT(TT, time_limit=10000):
         # Tick the clock
         t += 1
 
-        if forceBreak < 0:
+        if watchDog < 0:
             print('Force break triggered of scheduling of TT tasks...')
             break
-        forceBreak -= 1
+        watchDog -= 1
 
     # If at least one task has its duration more than 0 that indicates
     # that at least one task is not completed and therefore the schedule
@@ -102,6 +103,7 @@ def schedulingTT(TT, time_limit=10000):
     return schedule, wcrt
 
 
+# algorithm 2
 def schedulingET(Cp, Tp, Dp, ET):
     """
     Data: Polling task budget Cp, polling task period Tp, polling task deadline Dp,
@@ -204,6 +206,7 @@ def schedulingET(Cp, Tp, Dp, ET):
     return True, responseTime
 
 
+# usage of algorithm 2
 def addPollingTasks(TT, ET, PTs = 1):
     # When no ET given, return TT as given
     if len(ET) < 1:
@@ -232,6 +235,7 @@ def addPollingTasks(TT, ET, PTs = 1):
             worstResponseTime = 900000000
 
             # Get first available separation
+            # 1
             separation = separations.pop(0)
 
             # Hill Climbing until found the best budget for polling task, if any
@@ -245,7 +249,7 @@ def addPollingTasks(TT, ET, PTs = 1):
                         sublistET.append(task)
 
                 # Init the polling task attributes
-                pollingTask = [budget, period, period]
+                pollingTask = [budget, period, period]  # [budget, period, deadline = period]
 
                 # Check if sublistET is schedulable
                 schedulable, responseTime = schedulingET(pollingTask[0], pollingTask[1], pollingTask[2], sublistET)
@@ -278,6 +282,7 @@ def addPollingTasks(TT, ET, PTs = 1):
     return TT
 
 
+# usage of addPollingTasks and usage 1
 def schedule(csv):
     # Extract time triggered tasks from csv
     time_triggered_tasks = libs.CSVReader.get_tasks(csv, 'TT', False)
@@ -293,7 +298,7 @@ def schedule(csv):
     # Add time triggered polling tasks, if any
     time_triggered_tasks = addPollingTasks(time_triggered_tasks, event_triggered_tasks, 1)
 
-    # Get schadule table and worst-case response times
+    # Get schedule table and worst-case response times
     schedule, WCRT = schedulingTT(time_triggered_tasks)
 
     libs.Functions.printSchedule(schedule)

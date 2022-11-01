@@ -220,8 +220,8 @@ class MainTest(TestCase):
 
         # Third task should be tPT1 with earliest deadline
         self.assertEqual('tPT1', schedule[100].name)
-        self.assertEqual(3095, schedule[100].computation) # best budget is duration (computation)
-        self.assertEqual(lcm, schedule[100].deadline) # PT deadline = PT period = lcm of TT
+        self.assertEqual(3095, schedule[100].computation)  # best budget is duration (computation)
+        self.assertEqual(lcm, schedule[100].deadline)  # PT deadline = PT period = lcm of TT
         self.assertEqual('tPT1', schedule[1999].name)
         self.assertEqual(1196, schedule[1999].computation)
 
