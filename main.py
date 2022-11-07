@@ -153,7 +153,8 @@ def schedulingET(Cp, Tp, Dp, ET):
 
     # /* The hyperperiod is the least common multiple of all task periods in T^ET */
     # T ← lcm{Ti | ∀τi ∈ T ET };
-    T = libs.Functions.lcm(copy.deepcopy(ET))  # time limit
+    #T = libs.Functions.lcm(copy.deepcopy(ET))  # time limit
+    T = libs.Functions.lcm(ET)  # time limit
     # print(f"ET lcm: ", T)
 
     responseTime = 0
@@ -271,7 +272,8 @@ def addPollingTasks(TT, ET, PTs = 1):
 
         if foundSchedulableSeparation:
             # Create polling task
-            task = libs.get_polling(separation, bestBudget, period)
+            task.computation -=1
+            task = libs.get_polling(separation, bestBudget, period, task)
 
             # Add polling task to Time Triggered tasks
             print('Add pooling schedulable task with separation:', separation, 'and budget:', bestBudget, 'and period:', period)

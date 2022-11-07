@@ -29,7 +29,7 @@ class TaskModel:
 def get_idle():
     return TaskModel('idle', -1, -1, 'Idle', -1, -1)
 
-def get_polling(separation, budget, period):
+def get_polling(separation, budget, period, task):
     # deadline = period based on 3rd pdf hint
     # priority can be 7 since polling tasks are time triggered tasks
-    return TaskModel('tPT' + str(separation), budget, period, 'PT', 7, period, separation)
+    return TaskModel(f'tPT{str(separation)}_{task.name}', budget, period, 'PT', 7, period, separation)
