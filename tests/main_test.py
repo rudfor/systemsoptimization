@@ -2,6 +2,7 @@ import sys
 import os
 # this adds the main folder into this test scope so it will run as if in root
 sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
+sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/."))
 
 import main
 import libraries as libs
@@ -10,7 +11,7 @@ from unittest import TestCase
 class MainTest(TestCase):
 
     def test_successful_scheduling_of_two_TT(self):
-        inputTasks = libs.CSVReader.get_tasks('../resources/Test/data/tasks1.txt', 'TT')
+        inputTasks = libs.CSVReader.get_tasks('resources/test/data/tasks1.txt', 'TT')
 
         schedule, WRCT = main.schedulingTT(inputTasks)
 
@@ -50,7 +51,7 @@ class MainTest(TestCase):
         self.assertEqual(len(schedule), libs.Functions.lcm(inputTasks))
 
     def test_successful_scheduling_of_three_TT(self):
-        inputTasks = libs.CSVReader.get_tasks('../resources/Test/data/tasks2.txt', 'TT')
+        inputTasks = libs.CSVReader.get_tasks('resources/test/data/tasks2.txt', 'TT')
 
         schedule, WRCT = main.schedulingTT(inputTasks)
 
@@ -111,10 +112,10 @@ class MainTest(TestCase):
 
     def test_successful_scheduling_of_two_ET(self):
         # Event tasks to be scheduled by polling task
-        inputTasksET = libs.CSVReader.get_tasks('../resources/Test/data/tasks3.txt', 'ET')
+        inputTasksET = libs.CSVReader.get_tasks('resources/test/data/tasks3.txt', 'ET')
         self.assertEqual('tET0', inputTasksET[0].name)
 
-        inputTasksTT = libs.CSVReader.get_tasks('../resources/Test/data/tasks3.txt', 'TT')
+        inputTasksTT = libs.CSVReader.get_tasks('resources/test/data/tasks3.txt', 'TT')
         self.assertEqual('tTT1', inputTasksTT[0].name)
 
         # Demo of how we will integrate it to the scheduling_TT based on given pdf hints
@@ -146,9 +147,9 @@ class MainTest(TestCase):
 
     def test_successful_adding_polling_tasks_in_TT(self):
         # Event tasks to be scheduled by polling task
-        inputTasksET = libs.CSVReader.get_tasks('../resources/Test/data/tasks4.txt', 'ET')
+        inputTasksET = libs.CSVReader.get_tasks('resources/test/data/tasks4.txt', 'ET')
 
-        inputTasksTT = libs.CSVReader.get_tasks('../resources/Test/data/tasks4.txt', 'TT')
+        inputTasksTT = libs.CSVReader.get_tasks('resources/test/data/tasks4.txt', 'TT')
 
         PTs = 2
         TT_and_PT = main.addPollingTasks(inputTasksTT, inputTasksET, PTs)
@@ -162,7 +163,7 @@ class MainTest(TestCase):
         self.assertEqual(PTs, amountPT)
 
     def test_schedule_is_successfully_not_affected_by_task_list_without_ET(self):
-        csv = '../resources/Test/data/tasks1.txt' # no event tasks = no polling tasks
+        csv = 'resources/test/data/tasks1.txt' # no event tasks = no polling tasks
         schedule, WRCT = main.schedule(csv)
 
         # First task should be tTTO with earliest deadline
@@ -196,10 +197,10 @@ class MainTest(TestCase):
         self.assertEqual('idle', schedule[3999].name)
 
     def test_successful_scheduling_of_TT_and_one_PT(self):
-        csv = '../resources/Test/data/tasks5.txt'
+        csv = 'resources/test/data/tasks5.txt'
         schedule, WRCT = main.schedule(csv)
 
-        TT = libs.CSVReader.get_tasks('../resources/Test/data/tasks5.txt', 'TT')
+        TT = libs.CSVReader.get_tasks('resources/test/data/tasks5.txt', 'TT')
         lcm = libs.Functions.lcm(TT)
 
         self.assertEqual('idle', schedule[3999].name)
