@@ -26,7 +26,7 @@ class Functions():
     @staticmethod
     def printSchedule(schedule):
         for time, T in enumerate(schedule):
-            print('Scedule time:', time, 'On going task:', T.name, T.computation, T.init_deadline, T.deadline, T.separation)
+            print('Schedule time:', time, 'On going task:', T.name, T.computation, T.init_deadline, T.deadline, T.separation)
 
     @staticmethod
     def getPollingTaskPeriod(lcm):
