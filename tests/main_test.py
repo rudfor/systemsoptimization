@@ -154,7 +154,7 @@ class MainTest(TestCase):
         inputTasksTT = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks4.txt', 'TT')
 
         PTs = 2
-        TT_and_PT = main.addPollingTasks(inputTasksTT, inputTasksET, PTs)
+        TT_and_PT = libs.Polling.addTasks(inputTasksTT, inputTasksET, PTs)
 
         amountPT = 0
         for task in TT_and_PT:
