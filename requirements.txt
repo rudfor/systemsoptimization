@@ -1,0 +1,10 @@
+Sphinx==5.0.2
+sphinx-autobuild==2021.3.14
+sphinx-rtd-theme==1.0.0
+sphinx-tabs==3.4.0
+sphinxcontrib-drawio==0.0.16
+sphinxcontrib-jsmath==1.0.1
+sphinx-autorun==1.1.1
+breathe==4.34.0
+tqdm
+numpy
