@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 import csv
 import numpy as np
 
-
 class AlgoOne:
     """
     # algorithm 1
     """
     @staticmethod
-    def schedulingTT(TT, time_limit=10000, visuals = False):
+    def scheduling_TT(TT, time_limit=10000, visuals = False):
         """
         Data: TT task set TT T including polling server tasks T poll
         Result: TT schedule table (σ) and WCRTs of TT tasks (W CRTi)
@@ -29,6 +28,13 @@ class AlgoOne:
         :param T:
         :return:
         """
+        # FAIL_WCRT and FAIL_SCHEDULE will be the attributes we will set
+        # as a 'solution' when TT and PT are not schedulable.
+        # We do this in order to penalize the 'wrong solutions' so then
+        # the simulated_annealing will discard them and try another solution
+        FAIL_WCRT = 900000000
+        FAIL_SCHEDULE = []
+
         # Get least common multiple of task priorities
         time_limit = libs.Functions.lcm(copy.deepcopy(TT)) or time_limit
         print(f"\n TT lcm: ", time_limit)
@@ -51,21 +57,18 @@ class AlgoOne:
         csv_content = []
         while t < time_limit:
             csv_line = ''
-            # print(f"EDF: {libs.Functions.edf(t, TT.tasks).name}")
             for T in TT:
-                # print(f"{T.name}")
-
                 # Check time has not passed task deadline
                 if T.computation > 0 and T.deadline <= t:
                     libs.Debug_Output.message(f"\n Deadline Missed", t, T)
-                    sys.exit(1)
+                    return FAIL_SCHEDULE, FAIL_WCRT
 
                 # When task is completed we should reset its duration and move deadline to the present
                 if t % T.period == 0:
                     T.r = t
                     T.computation = T.init_computation
                     T.deadline = T.init_deadline + t
-                    print('\n reset on period', T.name, T.computation, T.init_deadline, T.deadline, t)
+                    # print('\n reset on period', T.name, T.computation, T.init_deadline, T.deadline, t)
 
                 if csv_line:
                     csv_line = f'{csv_line}, {T.computation}'
@@ -83,7 +86,6 @@ class AlgoOne:
                 ti = libs.Functions.edf(TT, t)
 
                 # Add task to the current second in the schedule
-                # print(f"add to schedule {ti.name} at {t}")
                 schedule[t] = copy.deepcopy(ti)
 
                 # Since we execute the task in the current second then we
@@ -94,7 +96,6 @@ class AlgoOne:
                 # Check time is behind task deadline
                 if ti.computation == 0 and ti.deadline >= t:
                     # Check wcrt is the maximum response time over all T jobs
-                    # libs.Debug_Output.message(f"Check if the current WCRT {t - T.r} is larger than the current maximum {T.wcrt}", t, T)
                     if (t - ti.r) >= ti.wcrt:
                         # Update max
                         ti.wcrt = t - ti.r
@@ -113,7 +114,7 @@ class AlgoOne:
         if any(task.computation > 0 for task in TT):
             for T in TT:
                 libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
-            sys.exit(1)
+            return FAIL_SCHEDULE, FAIL_WCRT
 
         if visuals:
             with open("output.csv", "w") as file:
@@ -125,8 +126,6 @@ class AlgoOne:
             df.plot()
             plt.show()
 
-        # print(f"{schedule}")
-        wcrt = [task.wcrt for task in TT]
-        # print(wcrt)
+        wcrt = sum(task.wcrt for task in TT)
 
         return schedule, wcrt

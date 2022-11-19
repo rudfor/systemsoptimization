@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
-import copy
-import math
 import libraries as libs
 
 # This is a sample Python script.
@@ -10,8 +7,42 @@ import libraries as libs
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-# usage of addPollingTasks and usage 1
-def schedule(csv):
+# CONSTANTS
+ET = []
+TT = []
+
+def search_solution(TT, ET):
+    sep_counter = libs.Functions.count_separations(ET)
+
+    # Get an initial solution to start the simulated annealing later
+    initial_solution = libs.Solution.schedule(TT, ET)
+
+    solutions = []
+
+    attempts = 10
+    while attempts > 0:
+        # Trigger simulated annealing
+        proposed_solution = libs.simulated_annealing(initial_solution, TT, ET)
+
+        # Validate proposed_solution cost
+        if proposed_solution.cost == 0:
+            continue
+
+        # Validate proposed_solution has right amount of PTs
+        if proposed_solution.PT_created < sep_counter:
+            continue
+
+        solutions.append(proposed_solution)
+
+        attempts -= 1
+
+    # Chose solution based on the min cost
+    final_solution = libs.Solution.select_best_solution(solutions)
+
+    return final_solution
+
+
+def get_tasks_from_csv(csv):
     # Extract time triggered tasks from csv
     time_triggered_tasks = libs.CSVReader.get_tasks(csv, 'TT', False)
     if (len(time_triggered_tasks) <= 0):
@@ -23,20 +54,7 @@ def schedule(csv):
     if (len(event_triggered_tasks) <= 0):
         print(f"<{csv}> has no event triggered tasks")
 
-    # Add time triggered polling tasks, if any
-    time_triggered_tasks = libs.Polling.addTasks(time_triggered_tasks, event_triggered_tasks, 1)
-    for tt in time_triggered_tasks:
-        print(f'time_triggered_tasks: {str(tt.__dict__)}')
-
-    # Get schedule table and worst-case response times
-    #schedule, WCRT = libs.AlgoOne.schedulingTT(time_triggered_tasks)
-    schedule, WCRT = libs.AlgoOne.schedulingTTPlot(time_triggered_tasks)
-
-    #libs.Functions.printSchedule(schedule)
-#    for time, T in enumerate(schedule):
-#        print(f'time: {time} - {T.name} - {str(T.computation)}')
-
-    return schedule, WCRT
+    return time_triggered_tasks, event_triggered_tasks
 
 
 # Press the green button in the gutter to run the script.
@@ -44,7 +62,9 @@ if __name__ == '__main__':
     # Ask user for file input
     csv = input("CSV path file: ") or 'resources/tasks.txt'
 
+    TT, ET = get_tasks_from_csv(csv)
+
     # Init scheduling
-    schedule(csv)
+    search_solution(TT, ET)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

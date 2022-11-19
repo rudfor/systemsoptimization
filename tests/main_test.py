@@ -12,11 +12,10 @@ rel_path = os.path.realpath(os.path.dirname(__file__))
 
 
 class MainTest(TestCase):
-
     def test_successful_scheduling_of_two_TT(self):
         inputTasks = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks1.txt', 'TT')
 
-        schedule, WRCT = libs.AlgoOne.schedulingTT(inputTasks)
+        schedule, WRCT = libs.AlgoOne.scheduling_TT(inputTasks)
 
         # libs.Functions.printSchedule(schedule)
 
@@ -56,7 +55,7 @@ class MainTest(TestCase):
     def test_successful_scheduling_of_three_TT(self):
         inputTasks = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks2.txt', 'TT')
 
-        schedule, WRCT = libs.AlgoOne.schedulingTT(inputTasks)
+        schedule, WRCT = libs.AlgoOne.scheduling_TT(inputTasks)
 
         # libs.Functions.printSchedule(schedule)
 
@@ -123,7 +122,7 @@ class MainTest(TestCase):
 
         # Demo of how we will integrate it to the scheduling_TT based on given pdf hints
         lcm = libs.Functions.lcm(inputTasksTT)
-        period = libs.Functions.getPollingTaskPeriod(lcm)
+        period = libs.Functions.get_polling_task_period(lcm)
         deadline = period
         results = [False, 900000000]
         # Hill climbing from 1 till period of server
@@ -131,7 +130,7 @@ class MainTest(TestCase):
         attemptsDuringPlateau = 3
         for budget in range(1, period):
             pollingTask = [budget, period, deadline]
-            schedulable, responseTime = libs.AlgoTwo.schedulingET(pollingTask[0], pollingTask[1], pollingTask[2], inputTasksET)
+            schedulable, responseTime = libs.AlgoTwo.scheduling_ET(pollingTask[0], pollingTask[1], pollingTask[2], inputTasksET)
 
             # if it is schedulable for budget then store responseTime if it's best found
             if (schedulable == True and responseTime <= results[1]):
@@ -153,20 +152,26 @@ class MainTest(TestCase):
         inputTasksET = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks4.txt', 'ET')
         inputTasksTT = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks4.txt', 'TT')
 
-        PTs = 2
-        TT_and_PT = libs.Polling.addTasks(inputTasksTT, inputTasksET, PTs)
+        PTs = 3
+        TT_and_PT, ET_WCRT, PT_created = libs.PollingServer.add_PT(inputTasksTT, inputTasksET, PTs)
 
         amountPT = 0
         for task in TT_and_PT:
+            print(task.type)
             if task.type == 'PT':
                 amountPT += 1
-                self.assertTrue(task.separation in [0, 1, 2])
+                print(task.separation)
+                self.assertTrue(task.separation in [0, 1, 2, 3])
 
         self.assertEqual(PTs, amountPT)
+        self.assertEqual(PTs, PT_created)
 
     def test_schedule_is_successfully_not_affected_by_task_list_without_ET(self):
         csv = f'{rel_path}/../resources/test/data/tasks1.txt' # no event tasks = no polling tasks
-        schedule, WRCT = main.schedule(csv)
+        TT, ET = main.get_tasks_from_csv(csv)
+        solution = libs.Solution.schedule(TT, ET)
+
+        schedule = solution.schedule
 
         # First task should be tTTO with earliest deadline
         self.assertEqual('tTT0', schedule[0].name)
@@ -200,48 +205,8 @@ class MainTest(TestCase):
 
     def test_successful_scheduling_of_TT_and_one_PT(self):
         csv = f'{rel_path}/../resources/test/data/tasks5.txt'
-        schedule, WRCT = main.schedule(csv)
+        TT, ET = main.get_tasks_from_csv(csv)
+        solution = libs.Solution.schedule(TT, ET)
 
-        TT = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks5.txt', 'TT')
-        lcm = libs.Functions.lcm(TT)
-
-        self.assertEqual('idle', schedule[3999].name)
-
-        # First task should be tTTO with earliest deadline
-        self.assertEqual('tTT0', schedule[0].name)
-        self.assertEqual(2000, schedule[0].deadline)
-        self.assertEqual(55, schedule[0].computation)
-        self.assertEqual('tTT0', schedule[54].name)
-        self.assertEqual(1, schedule[54].computation)
-
-        # Second task should be tTT1 with earliest deadline
-        self.assertEqual('tTT1', schedule[55].name)
-        self.assertEqual(45, schedule[55].computation)
-        self.assertEqual(4000, schedule[55].deadline)
-        self.assertEqual('tTT1', schedule[99].name)
-        self.assertEqual(1, schedule[99].computation)
-
-        # Third task should be tPT1 with earliest deadline
-        self.assertEqual('tPT1_tET0', schedule[100].name)
-        self.assertEqual(3095, schedule[100].computation)  # best budget is duration (computation)
-        self.assertEqual(lcm, schedule[100].deadline)  # PT deadline = PT period = lcm of TT
-        self.assertEqual('tPT1_tET0', schedule[1999].name)
-        self.assertEqual(1196, schedule[1999].computation)
-
-        # tPT0 now is paused because it is time for tTT0 period to start for 2nd time
-        # and based on the earliest deadline it overtakes the execution position of tPT0
-        self.assertEqual('tTT0', schedule[2000].name)
-        self.assertEqual(2000, schedule[2000].period)
-        self.assertEqual(4000, schedule[2000].deadline)
-        self.assertEqual(55, schedule[2000].computation)
-        self.assertEqual('tTT0', schedule[2054].name)
-        self.assertEqual(1, schedule[2054].computation)
-
-        # Now, after tTT0 is finished, the tPT0 task can resume
-        self.assertEqual('tPT1_tET0', schedule[2055].name)
-        self.assertEqual(1195, schedule[2055].computation)
-        self.assertEqual('tPT1_tET0', schedule[3249].name)
-        self.assertEqual(1, schedule[3249].computation)
-
-        # No task should be executed afterwards
-        self.assertEqual('idle', schedule[3500].name)
+        self.assertEqual(1, solution.PT_created)
+        self.assertNotEqual(0, solution.cost)
