@@ -8,7 +8,9 @@ class AlgoTwo:
     """
     # algorithm 2
     """
-    def schedulingET(Cp, Tp, Dp, ET):
+
+    @staticmethod
+    def scheduling_ET(Cp, Tp, Dp, ET):
         """
         Data: Polling task budget Cp, polling task period Tp, polling task deadline Dp,
         subset of ET tasks to check T^ET
@@ -76,7 +78,7 @@ class AlgoTwo:
             while time < T:
                 # The supply at time t (c.f. [1])
                 # supply ← α · (t − ∆);
-                supply = alpha * (time - delta)
+                supply = max(0, alpha * (time - delta))
 
                 # Compute the maximum demand at time t according to Eq. 2
                 # demand ← 0 ;
@@ -91,7 +93,7 @@ class AlgoTwo:
                 # According to Lemma 1 of [1], we are searching for the earliest time,
                 # when the supply exceeds the demand
                 # if supply ≥ demand then
-                if supply >= demand:
+                if supply >= demand and supply > 0:
                     # print('task name', task.name, 'supply', supply, 'demand', demand)
                     # responseTime ← t;
                     responseTime = time
