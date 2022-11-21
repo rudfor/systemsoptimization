@@ -32,7 +32,7 @@ class AlgoOne:
         # as a 'solution' when TT and PT are not schedulable.
         # We do this in order to penalize the 'wrong solutions' so then
         # the simulated_annealing will discard them and try another solution
-        FAIL_WCRT = 900000000
+        FAIL_WCRT = 10000000
         FAIL_SCHEDULE = []
 
         # Get least common multiple of task priorities

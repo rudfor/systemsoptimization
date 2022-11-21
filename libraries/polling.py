@@ -12,7 +12,8 @@ class PollingServer:
     # usage of algorithm 2
     @staticmethod
     def add_PT(TT, ET, polling_counter=None):
-        TT_and_PT = TT
+        TT_and_PT = copy.deepcopy(TT)
+
         # Stop if no ET given
         if len(ET) < 1:
             return TT, 0, 0
@@ -124,7 +125,7 @@ class PollingServer:
             PTs -= 1
             PT_created += 1
 
-        return TT_and_PT, ET_WCRT, PT_created
+        return copy.deepcopy(TT_and_PT), ET_WCRT, PT_created
 
     @staticmethod
     def get_event_sublists(ET):

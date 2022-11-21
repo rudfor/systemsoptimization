@@ -20,15 +20,14 @@ class Solution:
         cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT)
         solution = SolutionModel(schedule, cost, PT_created)
 
-        libs.Functions.print_schedule(schedule)
-
         return solution
 
     @staticmethod
     # Finds the best solution which is the one with min cost
     def select_best_solution(solutions):
-        best_solution = SolutionModel([], 90000000000000, 0)
+        best_solution = SolutionModel([], 10000000, 0)
         for solution in solutions:
+            print('Solution:', solution.cost, solution.PT_created)
             if solution.cost < best_solution.cost:
                 best_solution = solution
 

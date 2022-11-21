@@ -11,7 +11,9 @@ import libraries as libs
 ET = []
 TT = []
 
-def search_solution(TT, ET):
+def search_solution(csv):
+    TT, ET = get_tasks_from_csv(csv)
+
     sep_counter = libs.Functions.count_separations(ET)
 
     # Get an initial solution to start the simulated annealing later
@@ -39,7 +41,9 @@ def search_solution(TT, ET):
     # Chose solution based on the min cost
     final_solution = libs.Solution.select_best_solution(solutions)
 
-    return final_solution
+    libs.Functions.print_schedule(final_solution.schedule)
+
+    return final_solution, solutions
 
 
 def get_tasks_from_csv(csv):
@@ -62,9 +66,7 @@ if __name__ == '__main__':
     # Ask user for file input
     csv = input("CSV path file: ") or 'resources/tasks.txt'
 
-    TT, ET = get_tasks_from_csv(csv)
-
     # Init scheduling
-    search_solution(TT, ET)
+    solution = search_solution(csv)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
