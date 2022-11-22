@@ -52,7 +52,7 @@ class Functions():
         factor = random.choice(lcmFactors)
 
         # return a PT period that is in harmony with lcm
-        return int(lcm/factor)
+        return int(factor) if factor >= 2000 else 2000
 
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
@@ -96,3 +96,10 @@ class Debug_Output:
         print(f"Deadline: {Task.deadline}")
         print(f"Period: {Task.period}")
         print(f"Current time after execution: {time + Task.computation}")
+
+    @staticmethod
+    def show_solution(message, solution):
+        print(f"\n {message}"
+              f"cost: {solution.cost} "
+              f"created_PT: {solution.PT_created} and "
+              f"schedulable: {solution.schedulable}")

@@ -19,12 +19,20 @@ def search_solution(csv):
     # Get an initial solution to start the simulated annealing later
     initial_solution = libs.Solution.schedule(TT, ET)
 
+    libs.Debug_Output.show_solution('Initial solution for TTs and TPs with ', initial_solution)
+
     solutions = []
 
-    attempts = 10
-    while attempts > 0:
+    while len(solutions) < 5:
+        print('Accepted solutions found so far: ', len(solutions))
         # Trigger simulated annealing
         proposed_solution = libs.simulated_annealing(initial_solution, TT, ET)
+
+        libs.Debug_Output.show_solution('SA proposed solution for TTs and TPs with ', proposed_solution)
+
+        # Validate solution is schedulable
+        if not proposed_solution.schedulable:
+            continue
 
         # Validate proposed_solution cost
         if proposed_solution.cost == 0:
@@ -35,8 +43,6 @@ def search_solution(csv):
             continue
 
         solutions.append(proposed_solution)
-
-        attempts -= 1
 
     # Chose solution based on the min cost
     final_solution = libs.Solution.select_best_solution(solutions)

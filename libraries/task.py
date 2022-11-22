@@ -32,7 +32,7 @@ class TaskModel:
                f"name({self.name}) " \
                f"computation({self.computation}) " \
                f"period({self.period}) " \
-               f"type([{self.type})] " \
+               f"type({self.type}) " \
                f"deadline({self.deadline}) " \
                f"separation({self.separation})"
 

@@ -1,3 +1,4 @@
+import random
 import sys
 import copy
 import math
@@ -13,118 +14,123 @@ class PollingServer:
     @staticmethod
     def add_PT(TT, ET, polling_counter=None):
         TT_and_PT = copy.deepcopy(TT)
+        ET_WCRT = 0
+        PT_created = 0
 
         # Stop if no ET given
         if len(ET) < 1:
             return TT, 0, 0
-
-        # Identify all given separations
-        separations = libs.Functions.get_separations(ET)
 
         # Prepare event sublists for which we will create polling tasks
         sublistETs = PollingServer.get_event_sublists(ET)
 
         # For a given polling server, the search space for the period can be
         # between 2 and the hyperperiod of all TT tasks (2nd hint in pdf)
-        lcm = libs.Functions.lcm(copy.deepcopy(TT_and_PT))
-        pollingPeriod = libs.Functions.get_polling_task_period(lcm)
-        deadline = pollingPeriod
-        print('Polling period:', pollingPeriod)
+        lcm = libs.Functions.lcm(copy.deepcopy(TT))
 
         # Decide how many polling servers we need based of how many separations we have
         PTs = len(sublistETs)
-        ET_WCRT = 0
-        PT_created = 0
-        while len(separations) > 0:
-            # The maximum response is the whole period,
-            # we init the value as such in order to set a penalty for a sublist
-            # not able to be scheduled, this way we can accept "wrong"
-            # solutions but avoid picking them as the final solution
-            bestResponseTime = pollingPeriod
+        while PTs != PT_created:
+            TT_and_PT = copy.deepcopy(TT)
+            ET_WCRT = 0
+            PT_created = 0
 
-            # Find a separation which tasks can be schedulable
-            foundSchedulableSeparation = False
+            # Identify all given separations
+            separations = libs.Functions.get_separations(ET)
+            while len(separations) > 0:
+                # Get FIRST available separation
+                # if separations = [1,2,3,4,5] then it will pop 1
+                separation = separations.pop(0)
 
-            # Get FIRST available separation
-            # if separations = [1,2,3,4,5] then it will pop 1
-            separation = separations.pop(0)
+                # Find a separation which tasks can be schedulable
+                foundSchedulableSeparation = False
 
-            # Extract events for separation
-            sublistET = sublistETs[separation]
+                while not foundSchedulableSeparation:
+                    pollingPeriod = libs.Functions.get_polling_task_period(lcm)
+                    deadline = pollingPeriod
+                    print('Polling period:', pollingPeriod)
 
-            # Init performance runtime memory for the current separation
-            performanceTable = []
+                    # The maximum response is the whole period,
+                    # we init the value as such in order to set a penalty for a sublist
+                    # not able to be scheduled, this way we can accept "wrong"
+                    # solutions but avoid picking them as the final solution
+                    bestResponseTime = pollingPeriod
 
-            # Best budget calculation is based on Hill Climbing
-            # We start from 1 with step 1 until we reach the period
-            # The climb will stop early if wet the same wcrt 3 times
-            attemptsDuringPlateau = 3
-            for budget in range(1, pollingPeriod):
-                # Init the polling task attributes
-                pollingTask = [budget, pollingPeriod, deadline]
+                    # Extract events for separation
+                    sublistET = sublistETs[separation]
 
-                # Check if sublistET is schedulable
-                schedulable, responseTime = libs.AlgoTwo.scheduling_ET(
-                    pollingTask[0],
-                    pollingTask[1],
-                    pollingTask[2],
-                    sublistET
-                )
+                    # Init performance runtime memory for the current separation
+                    performanceTable = []
 
-                # If separation is schedulable for budget then we store
-                # the successful configuration into the performance table
-                # Here we use response time as cost of our binary search
-                # in order to determine the best budget.
-                if (schedulable == True and responseTime <= bestResponseTime):
-                    # Store wcrt and according period
-                    performanceTable.append([budget, responseTime, separation, pollingPeriod, sublistET])
+                    # Best budget calculation is based on Hill Climbing
+                    # We start from 1 with step 1 until we reach the period
+                    # The climb will stop early if wet the same wcrt 3 times
+                    attemptsDuringPlateau = 3
+                    for budget in range(1, pollingPeriod):
+                        # Init the polling task attributes
+                        pollingTask = [budget, pollingPeriod, deadline]
 
-                    bestResponseTime = responseTime
-                    foundSchedulableSeparation = True
+                        # Check if sublistET is schedulable
+                        schedulable, responseTime = libs.AlgoTwo.scheduling_ET(
+                            pollingTask[0],
+                            pollingTask[1],
+                            pollingTask[2],
+                            sublistET
+                        )
 
-                    # Decrease attempts during plateau
-                    if bestResponseTime == responseTime:
-                        attemptsDuringPlateau -= 1
+                        # If separation is schedulable for budget then we store
+                        # the successful configuration into the performance table
+                        # Here we use response time as cost of our binary search
+                        # in order to determine the best budget.
+                        if (schedulable == True and responseTime <= bestResponseTime):
+                            # Store wcrt and according period
+                            performanceTable.append([budget, responseTime, separation, pollingPeriod, sublistET])
 
-                    # Terminate search once consumed all plateau attempts
-                    if attemptsDuringPlateau < 1:
-                        print('plateau')
-                        break
+                            bestResponseTime = responseTime
+                            foundSchedulableSeparation = True
 
-            # Get budget for polling task
-            if foundSchedulableSeparation:
-                # pollingConfig = [budget, responseTime, separation, pollingPeriod, sublistET]
-                pollingConfig = PollingServer.get_Min_Budget_Min_Period_Config(performanceTable)
-                bestResponseTime = pollingConfig[1]
-                budget = pollingConfig[0]
+                            # Decrease attempts during plateau
+                            if bestResponseTime == responseTime:
+                                attemptsDuringPlateau -= 1
 
-            # When the sublist of events is not schedulable,
-            # we create a polling task with bad period as a penalty
-            # for this polling task in order to allow "wrong" solutions
-            # but avoid picking them as final solution in simulated annealing
-            else:
-                budget = bestResponseTime
+                            # Terminate search once consumed all plateau attempts
+                            if attemptsDuringPlateau < 1:
+                                print('plateau')
+                                break
 
-            # Create polling task
-            task = libs.get_polling(separation, budget, pollingPeriod, sublistET)
+                    # Get budget for polling task
+                    if foundSchedulableSeparation:
+                        # pollingConfig = [budget, responseTime, separation, pollingPeriod, sublistET]
+                        pollingConfig = PollingServer.get_Min_Budget_Min_Period_Config(performanceTable)
+                        bestResponseTime = pollingConfig[1]
+                        budget = pollingConfig[0]
 
-            print(
-                '\n',
-                'Add pooling schedulable task with name:', task.name, '\n',
-                'and with separation:', task.separation, '\n',
-                'and computation:', task.computation, '\n',
-                'and period:', task.period, '\n',
-                'and assigned events:', task.assignedEvents,
-            )
+                        # Create polling task
+                        task = libs.get_polling(separation, budget, pollingPeriod, sublistET)
 
-            # Add polling task to Time Triggered tasks
-            TT_and_PT.append(task)
+                        print(
+                            '\n',
+                            'Add pooling schedulable task with name:', task.name, '\n',
+                            'and with separation:', task.separation, '\n',
+                            'and computation:', task.computation, '\n',
+                            'and period:', task.period, '\n',
+                            'and assigned events:', task.assignedEvents,
+                        )
 
-            ET_WCRT += bestResponseTime
+                        # Add polling task to Time Triggered tasks
+                        TT_and_PT.append(task)
 
-            PTs -= 1
-            PT_created += 1
+                        ET_WCRT += bestResponseTime
 
+                        PT_created += 1
+
+            #
+            # # When the sublist of events is not schedulable,
+            # # we create a polling task with bad period as a penalty
+            # # for this polling task in order to allow "wrong" solutions
+            # # but avoid picking them as final solution in simulated annealing
+            # else:
+            #     budget = bestResponseTime
         return copy.deepcopy(TT_and_PT), ET_WCRT, PT_created
 
     @staticmethod
@@ -139,7 +145,7 @@ class PollingServer:
             sublistETs[event.separation].append(event)
 
         # Check if we have events with zero separation and
-        # split them among the rest of the separations
+        # split them among the rest of the separations randomly
         #
         # Code block bellow will do the following:
         # From:  {0: [ET1,ET2], 1: [ET3], 2: [ET4]}
@@ -153,22 +159,19 @@ class PollingServer:
             # Adds one zero_event to each of the rest of the separations and
             # until all zero_events are all distributed completely
             print('\n')
-            print('separation[separation]', sublistETs)
+            print('All sublistETs: ', sublistETs)
+            separations = list(sublistETs.keys())
             while len(zeros) > 0:
-                for separation, events in sublistETs.items():
-                    if separation == 0:
-                        continue
-                    # get an event from the zeros
-                    print(len(zeros))
-                    zeroEvent = zeros.pop()
+                chose_separations = random.choice(separations)
+                if chose_separations == 0:
+                    continue
+                # get an event from the zeros
+                zeroEvent = zeros.pop()
 
-                    # and add it to the current separation
-                    sublistETs[separation].append(zeroEvent)
+                # and add it to the current separation
+                sublistETs[chose_separations].append(zeroEvent)
 
-                    if len(zeros) == 0:
-                        break
-
-            print('separation[separation]', sublistETs)
+            print('Distributed zeros sublistETs:', sublistETs)
         return sublistETs
 
     @staticmethod

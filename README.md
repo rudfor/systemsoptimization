@@ -55,12 +55,10 @@ Here is the generic TaskModel as well as the getters for Idle and Polling TaskMo
 This is a tool we made in order to read 7 or 8 column csv and create a list of TaskModels.
 
 ### To-Do
-#### ET task specific scheduling
-So far we don't keep the specific scheduling of the ET when they are scheduled. We only know that if there is a PT in the TT, then the ET task with the PT's separation and the non-separation ET tasks are schedulable in some way inside the PT duration, but we don't know in which exact order. Not sure if we need to know the ET specific schedule table within the PT tasks. 
-
-#### Period of PT
-So far, we set the PT period by picking a common multiple of 2 and the lcm (of all TT) for our convenience and faster execution. We might want to find another way because that period maybe is not the optimal.
-
-#### More tests
-More complicated tests will help us find issues and refine the algorithms
+#### neighborhood function should do 
+decide how many polling servers, redistribute zero event task, decide period and budget based on the previous solution
+#### failed solution penatly 
+should be a multiple of the cost
+#### responseTime inside Algo 2 
+save of each task into a list and return it 
 
