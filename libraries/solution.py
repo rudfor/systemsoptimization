@@ -39,3 +39,47 @@ class Solution:
         print('#'*50)
 
         return best_solution
+
+    @staticmethod
+    def search_solution(csv):
+        # CONSTANTS
+        #ET = []
+        #TT = []
+        TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
+
+        sep_counter = libs.Functions.count_separations(ET)
+
+        # Get an initial solution to start the simulated annealing later
+        initial_solution = libs.Solution.schedule(TT, ET)
+
+        libs.Debug_Output.show_solution('Initial solution for TTs and TPs with ', initial_solution)
+
+        solutions = []
+
+        while len(solutions) < 5:
+            print('Accepted solutions found so far: ', len(solutions))
+            # Trigger simulated annealing
+            proposed_solution = libs.simulated_annealing(initial_solution, TT, ET)
+
+            libs.Debug_Output.show_solution('SA proposed solution for TTs and TPs with ', proposed_solution)
+
+            # Validate solution is schedulable
+            if not proposed_solution.schedulable:
+                continue
+
+            # Validate proposed_solution cost
+            if proposed_solution.cost == 0:
+                continue
+
+            # Validate proposed_solution has right amount of PTs
+            if proposed_solution.PT_created < sep_counter:
+                continue
+
+            solutions.append(proposed_solution)
+
+        # Chose solution based on the min cost
+        final_solution = libs.Solution.select_best_solution(solutions)
+
+        libs.Functions.print_schedule(final_solution.schedule)
+
+        return final_solution, solutions
