@@ -36,6 +36,9 @@ class TaskModel:
                f"deadline({self.deadline}) " \
                f"separation({self.separation})"
 
+    def __hash__(self):
+        return hash((self.name, self.type))
+
 def get_idle():
     return TaskModel('idle', -1, -1, 'Idle', -1, -1)
 

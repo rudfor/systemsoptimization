@@ -85,6 +85,19 @@ class Functions():
 
         return len(separations)
 
+    @staticmethod
+    def dict_hash(the_dict, *ignore):
+        if ignore:  # Sometimes you don't care about some items
+            interesting = the_dict.copy()
+            for item in ignore:
+                if item in interesting:
+                    interesting.pop(item)
+            the_dict = interesting
+        result = hashlib.sha1(
+            '%s' % sorted(the_dict.items())
+        ).hexdigest()
+        return result
+
 
 class Debug_Output:
     @staticmethod
