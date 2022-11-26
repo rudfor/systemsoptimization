@@ -56,10 +56,14 @@ if __name__ == '__main__':
         print(f'{t}')
         print(f'Task Hash : {t.__hash__()}')
 
-    libs.AlgoOne.scheduling_TT(TT, visuals=True)
-    libs.AlgoOne.scheduling_TT(PT, visuals=True)
+    schedule1, wcrt1, isSchedulable1 = libs.AlgoOne.scheduling_TT(TT, visuals=args.plot)
+    schedule2, wcrt2, isSchedulable2 = libs.AlgoOne.scheduling_TT(PT, visuals=args.plot)
 
-    libs.AlgoOne.scheduling_TT(TT+PT, visuals=True)
+    schedule3, wcrt3, isSchedulable3 = libs.AlgoOne.scheduling_TT(TT+PT, visuals=args.plot)
+
+    print(f'wcrt: {wcrt1}, schedulable={isSchedulable1}')
+    print(f'wcrt: {wcrt2}, schedulable={isSchedulable2}')
+    print(f'wcrt: {wcrt3}, schedulable={isSchedulable3}')
 
     #libs.Solution.schedule(TT, PT)
     #print(f'{testTask}')
