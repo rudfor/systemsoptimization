@@ -24,6 +24,21 @@ class Functions():
         return np.lcm.reduce(periods)
 
     @staticmethod
+    def computation(tasks, verbose=False):
+        compute = [task.computation for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return sum(compute)
+
+    @staticmethod
+    def deadline(tasks, verbose=False):
+        compute = [task.deadline for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return min(compute)
+
+
+    @staticmethod
     def get_factors(number: int):
         factors = []
         factor = 1

@@ -117,12 +117,12 @@ class AlgoOne:
             return FAIL_SCHEDULE, FAIL_WCRT, False
 
         if visuals:
-            with open("output.csv", "w") as file:
+            with open("output/output.csv", "w") as file:
                 file.write(csv_header + '\n')
                 for csv_line in csv_content:
                     file.writelines(csv_line + '\n')
 
-            df = pd.read_csv('output.csv')
+            df = pd.read_csv('output/output.csv')
             df.plot()
             plt.show()
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import libraries as libs
+import os
+import sys
+
 from pprint import pformat
 import maps
 from immutables import Map
@@ -18,6 +21,11 @@ if __name__ == '__main__':
     else:
         csv = args.csv
 
+    hashseed = os.getenv('PYTHONHASHSEED')
+    if not hashseed:
+        os.environ['PYTHONHASHSEED'] = args.seed
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+
     #Initial Condition
     # Read CSV for Tasks
     TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
@@ -26,26 +34,35 @@ if __name__ == '__main__':
     print(f'LCM: TT: {libs.Functions.lcm(TT)}')
     for listET in sublistET:
         print(f'LCM: ET: PS_{listET}: {libs.Functions.lcm(sublistET[listET])}')
-    # Playing with HASHING
-    if False:
-        print(f'########################')
-        hash_list = []
-        for listET in sublistET:
-            hash_list.append(hash(sublistET[listET].__repr__()))
-            print(f'hash: {hash(sublistET[listET].__str__())}')
-            print(f'list : {listET}{sublistET[listET]}')
-            for taskET in sublistET[listET]:
-                print(f'TASK: {hash(taskET)}')
-        print(f'########################')
-        print(f'{hash(pformat(sublistET))}')
-        for hash_obj in hash_list:
-            print(f'HS: {hash_obj}')
 
-    for listET in sublistET:
-        print(f'list : {listET}{sublistET[listET]}')
+    for t in TT:
+        print(f'{t}')
+        print(f'Task Hash : {t.__hash__()}')
 
+    PT = []
+    for ps in sublistET:
+        testTask = libs.TaskModel(name=f'PT{ps}',
+                                  computation=libs.Functions.computation(sublistET[ps]),
+                                  period=libs.Functions.lcm(sublistET[ps]),
+                                  priority=7,
+                                  type='PT',
+                                  deadline=libs.Functions.deadline(sublistET[ps]),
+                                  separation=ps,
+                                  assigned_events=(sublistET[ps])
+                                  )
+        PT.append(testTask)
 
-    # Init scheduling
+    for t in PT:
+        print(f'{t}')
+        print(f'Task Hash : {t.__hash__()}')
+
+    libs.AlgoOne.scheduling_TT(TT, visuals=True)
+    libs.AlgoOne.scheduling_TT(PT, visuals=True)
+
+    libs.AlgoOne.scheduling_TT(TT+PT, visuals=True)
+
+    #libs.Solution.schedule(TT, PT)
+    #print(f'{testTask}')
     #solution = libs.Solution.search_solution(csv)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
