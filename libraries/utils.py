@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import random
 
@@ -53,24 +55,44 @@ class Functions():
         for time, T in enumerate(schedule):
             print('Schedule time:', time, 'On going task:', T.name, T.computation, T.init_deadline, T.deadline, T.separation)
 
-    @staticmethod
-    def get_polling_task_budget(period):
-        return int(random.randint(1, period))
+    # @staticmethod
+    # def get_polling_task_budget(period):
+    #     return int(random.randint(1, period))
 
-
     @staticmethod
-    def get_polling_task_period(lcm):
+    def get_polling_task_period(lcm, previous_period = None):
         # get lcm factors
         lcmFactors = Functions.get_factors(lcm)
+        lcmFactors = [x for x in lcmFactors if x >= 500 and x <= 6000]
+        # print('lcmFactors', lcmFactors)
 
-        # pick any factor
-        factor = random.choice(lcmFactors)
+        if previous_period is not None:
+            previous_index = lcmFactors.index(previous_period)
+            next_index = previous_index + random.randint(-1, 1)
+            factor = lcmFactors[next_index] if next_index <= len(lcmFactors)-1 else random.choice(lcmFactors)
+        else:
+            # pick any factor
+            factor = random.choice(lcmFactors)
 
         # return a PT period that is in harmony with lcm
-        return int(factor) if factor >= 2000 else 2000
+        return int(factor)
+
+    @staticmethod
+    def get_polling_task_budget(ET, previous_budget = None):
+        next_budget = 0
+        if previous_budget is None:
+            next_budget = 0
+            for event in ET:
+                next_budget += event.computation
+        else:
+            next_budget = previous_budget + 100
+
+        return int(next_budget)
 
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
+        # print('TT_WCRT + ET_WCRT', TT_WCRT, ET_WCRT)
+        # sys.exit()
         return TT_WCRT + ET_WCRT
 
     @staticmethod
@@ -92,6 +114,53 @@ class Functions():
             separations.remove(0)
 
         return separations
+
+    @staticmethod
+    def get_event_sublists(ET, seed=None, verbose=False):
+        # Seed initial value
+        if seed is not None:
+            random.seed(seed)
+        else:
+            random.seed()
+
+        # initialize event sublists
+        sublistETs = dict()
+
+        # Get sublist of ET tasks with the same separation also for zeros
+        for event in ET:
+            if event.separation not in sublistETs.keys():
+                sublistETs[event.separation] = []
+            sublistETs[event.separation].append(event)
+
+        # Check if we have events with zero separation and
+        # split them among the rest of the separations randomly
+        #
+        # Code block bellow will do the following:
+        # From:  {0: [ET1,ET2], 1: [ET3], 2: [ET4]}
+        # To:    {1: [ET3,ET1], 2: [ET4,ET2]}
+        if 0 in sublistETs.keys() and len(sublistETs) > 1:
+            # get the events of the key for zero separation
+            # and remove the key from sublistETs
+            zeros = sublistETs.pop(0, None)
+
+            # Split events with zero separation among the rest of separations
+            # Adds one zero_event to each of the rest of the separations and
+            # until all zero_events are all distributed completely
+            if verbose: print('\n')
+            if verbose: print('All sublistETs: ', sublistETs)
+            separations = list(sublistETs.keys())
+            while len(zeros) > 0:
+                chose_separations = random.choice(separations)
+                if chose_separations == 0:
+                    continue
+                # get an event from the zeros
+                zeroEvent = zeros.pop()
+
+                # and add it to the current separation
+                sublistETs[chose_separations].append(zeroEvent)
+
+            if verbose: print('Distributed zeros sublistETs:', sublistETs)
+        return sublistETs
 
     @staticmethod
     def count_separations(ET):
@@ -129,5 +198,4 @@ class Debug_Output:
     def show_solution(message, solution):
         print(f"\n {message}"
               f"cost: {solution.cost} "
-              f"created_PT: {solution.PT_created} and "
               f"schedulable: {solution.schedulable}")
