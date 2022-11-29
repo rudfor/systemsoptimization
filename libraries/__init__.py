@@ -6,4 +6,5 @@ from .algo_two import *
 from .polling import *
 from .simulated_annealing import *
 from .solution import *
+from .cli import Cli
 

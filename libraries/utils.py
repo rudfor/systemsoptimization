@@ -24,6 +24,21 @@ class Functions():
         return np.lcm.reduce(periods)
 
     @staticmethod
+    def computation(tasks, verbose=False):
+        compute = [task.computation for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return sum(compute)
+
+    @staticmethod
+    def deadline(tasks, verbose=False):
+        compute = [task.deadline for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return min(compute)
+
+
+    @staticmethod
     def get_factors(number: int):
         factors = []
         factor = 1
@@ -84,6 +99,19 @@ class Functions():
         separations = Functions.get_separations(ET)
 
         return len(separations)
+
+    @staticmethod
+    def dict_hash(the_dict, *ignore):
+        if ignore:  # Sometimes you don't care about some items
+            interesting = the_dict.copy()
+            for item in ignore:
+                if item in interesting:
+                    interesting.pop(item)
+            the_dict = interesting
+        result = hashlib.sha1(
+            '%s' % sorted(the_dict.items())
+        ).hexdigest()
+        return result
 
 
 class Debug_Output:

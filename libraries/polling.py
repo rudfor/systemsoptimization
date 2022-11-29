@@ -134,7 +134,13 @@ class PollingServer:
         return copy.deepcopy(TT_and_PT), ET_WCRT, PT_created
 
     @staticmethod
-    def get_event_sublists(ET):
+    def get_event_sublists(ET, seed=None, verbose=False):
+        # Seed initial value
+        if seed is not None:
+            random.seed(seed)
+        else:
+            random.seed()
+
         # initialize event sublists
         sublistETs = dict()
 
@@ -158,8 +164,8 @@ class PollingServer:
             # Split events with zero separation among the rest of separations
             # Adds one zero_event to each of the rest of the separations and
             # until all zero_events are all distributed completely
-            print('\n')
-            print('All sublistETs: ', sublistETs)
+            if verbose: print('\n')
+            if verbose: print('All sublistETs: ', sublistETs)
             separations = list(sublistETs.keys())
             while len(zeros) > 0:
                 chose_separations = random.choice(separations)
@@ -171,7 +177,7 @@ class PollingServer:
                 # and add it to the current separation
                 sublistETs[chose_separations].append(zeroEvent)
 
-            print('Distributed zeros sublistETs:', sublistETs)
+            if verbose: print('Distributed zeros sublistETs:', sublistETs)
         return sublistETs
 
     @staticmethod

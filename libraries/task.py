@@ -12,7 +12,7 @@ class TaskModel:
     while for ET tasks, where we assume a sporadic model,
     it describes the minimal inter-arrival distance (MIT)
     """
-    def __init__(self, name, computation, period, type, priority, deadline, separation = 0, assigned_events = None):
+    def __init__(self, name, computation, period, type, priority, deadline, separation=0, assigned_events=None):
         self.name = name
         self.computation = int(computation) # ci computation
         self.init_computation = int(computation) # Ci initial computation
@@ -28,13 +28,29 @@ class TaskModel:
         self.wcrt = 0
 
     def __repr__(self):
-        return f"\n Task: " \
-               f"name({self.name}) " \
-               f"computation({self.computation}) " \
-               f"period({self.period}) " \
-               f"type({self.type}) " \
-               f"deadline({self.deadline}) " \
-               f"separation({self.separation})"
+        if self.assignedEvents is None:
+            return_string = f'Task: '
+            return_string += f'name({self.name}) '
+            return_string += f'computation({self.computation}) '
+            return_string += f'period({self.period}) '
+            return_string += f"type({self.type}) "
+            return_string += f"deadline({self.deadline}) "
+            return_string += f"separation({self.separation})"
+        else:
+            return_string = f'Task: '
+            return_string += f'name({self.name}) '
+            return_string += f'computation({self.computation}) '
+            return_string += f'period({self.period}) '
+            return_string += f"type({self.type}) "
+            return_string += f"deadline({self.deadline}) "
+            return_string += f"separation({self.separation})"
+            for et in self.assignedEvents:
+                return_string += f"\n\t{et.__repr__()}"
+
+        return return_string
+
+    def __hash__(self):
+        return hash((self.__repr__()))
 
 def get_idle():
     return TaskModel('idle', -1, -1, 'Idle', -1, -1)

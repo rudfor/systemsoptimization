@@ -10,6 +10,21 @@ class CSVReader():
         self.verbose = verbose
 
     @staticmethod
+    def get_tasks_from_csv(csv):
+        # Extract time triggered tasks from csv
+        time_triggered_tasks = CSVReader.get_tasks(csv, 'TT', False)
+        if (len(time_triggered_tasks) <= 0):
+            print(f"<{csv}> is empty or was not properly formed")
+            exit(1)
+
+        # Extract event triggered tasks from csv
+        event_triggered_tasks = CSVReader.get_tasks(csv, 'ET', False)
+        if (len(event_triggered_tasks) <= 0):
+            print(f"<{csv}> has no event triggered tasks")
+
+        return time_triggered_tasks, event_triggered_tasks
+
+    @staticmethod
     def get_tasks(csf_file, task_type='TT', verbose=False):
         list = []
         with open(csf_file) as file:
