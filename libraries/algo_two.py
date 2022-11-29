@@ -52,6 +52,7 @@ class AlgoTwo:
         # ∆ ← Tp + Dp − 2 · Cp;
         delta = Tp + Dp - (2 * Cp)
         # print('init delta:', delta)
+        # print('Tp', Tp, 'Cp', Cp, 'Dp', Dp)
 
         # α ← Cp/ Tp
         alpha = Cp / Tp
@@ -59,16 +60,16 @@ class AlgoTwo:
 
         # /* The hyperperiod is the least common multiple of all task periods in T^ET */
         # T ← lcm{Ti | ∀τi ∈ T ET };
-        # T = libs.Functions.lcm(copy.deepcopy(ET))  # time limit
-        T = libs.Functions.lcm(ET)  # time limit
+        T = libs.Functions.lcm(copy.deepcopy(ET))  # time limit
         # print(f"ET lcm: ", T)
 
         responseTime = 0
+        response_times = dict()
         for task in ET:
             time = 0
 
             # Initialize the response time of τi to a value exceeding the deadline
-            # responseT ime ← Di + 1
+            # responseTime ← Di + 1
             responseTime = task.deadline + 1
 
             # Remember, we are dealing with constrained deadline tasks, hence, in the
@@ -93,10 +94,11 @@ class AlgoTwo:
                 # According to Lemma 1 of [1], we are searching for the earliest time,
                 # when the supply exceeds the demand
                 # if supply ≥ demand then
-                if supply >= demand and supply > 0:
+                if supply >= demand and supply > 0 and demand > 0:
                     # print('task name', task.name, 'supply', supply, 'demand', demand)
                     # responseTime ← t;
                     responseTime = time
+                    response_times[task] = responseTime
                     break
 
                 # Tick the clock
@@ -110,4 +112,4 @@ class AlgoTwo:
                 # print('responseTime:', responseTime, 'Di:', task.deadline)
                 return False, responseTime
 
-        return True, responseTime
+        return True, sum(rt for t, rt in response_times.items())
