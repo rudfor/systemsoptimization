@@ -6,6 +6,30 @@ import libraries as libs
 
 
 class PollingServer:
+    @staticmethod
+    def check_polling_tasks_schedulability(PT):
+        # Stop if no polling servers
+        # print('len(PT)', len(PT))
+        if len(PT) < 1:
+            return
+
+        ET_WCRT = 0
+        for pt in PT:
+            schedulable, responseTime = libs.AlgoTwo.scheduling_ET(
+                pt.budget,
+                pt.period,
+                pt.period,
+                pt.assignedEvents
+            )
+
+            # print('responseTime', responseTime, 'schedulable', schedulable)
+            if not schedulable:
+                return False, 50000
+
+            ET_WCRT += responseTime
+
+        return True, ET_WCRT
+
     """
     Adds Polling Tasks to the TT
     return TT_and_PT, ET_WCRT, PT_created
