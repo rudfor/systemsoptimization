@@ -32,12 +32,12 @@ class AlgoOne:
         # as a 'solution' when TT and PT are not schedulable.
         # We do this in order to penalize the 'wrong solutions' so then
         # the simulated_annealing will discard them and try another solution
-        FAIL_WCRT = 99999999999
+        FAIL_WCRT = 50000
         FAIL_SCHEDULE = []
 
         # Get least common multiple of task priorities
         time_limit = libs.Functions.lcm(copy.deepcopy(TT)) or time_limit
-        print(f"\n TT lcm: ", time_limit)
+        # print(f"\n TT lcm: ", time_limit)
 
         csv_header = ""
         for T in TT:
@@ -112,8 +112,8 @@ class AlgoOne:
         # that at least one task is not completed and therefore the schedule
         # is infeasible for the given combination of tasks in the given time limit.
         if any(task.computation > 0 for task in TT):
-            for T in TT:
-                libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
+            # for T in TT:
+                # libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
             return FAIL_SCHEDULE, FAIL_WCRT, False
 
         if visuals:
