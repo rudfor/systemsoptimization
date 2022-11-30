@@ -32,7 +32,7 @@ class AlgoOne:
         # as a 'solution' when TT and PT are not schedulable.
         # We do this in order to penalize the 'wrong solutions' so then
         # the simulated_annealing will discard them and try another solution
-        FAIL_WCRT = 10000000
+        FAIL_WCRT = 99999999999
         FAIL_SCHEDULE = []
 
         # Get least common multiple of task priorities
@@ -61,7 +61,7 @@ class AlgoOne:
                 # Check time has not passed task deadline
                 if T.computation > 0 and T.deadline <= t:
                     libs.Debug_Output.message(f"\n Deadline Missed", t, T)
-                    return FAIL_SCHEDULE, FAIL_WCRT
+                    return FAIL_SCHEDULE, FAIL_WCRT, False
 
                 # When task is completed we should reset its duration and move deadline to the present
                 if t % T.period == 0:
@@ -114,18 +114,18 @@ class AlgoOne:
         if any(task.computation > 0 for task in TT):
             for T in TT:
                 libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
-            return FAIL_SCHEDULE, FAIL_WCRT
+            return FAIL_SCHEDULE, FAIL_WCRT, False
 
         if visuals:
-            with open("output.csv", "w") as file:
+            with open("output/output.csv", "w") as file:
                 file.write(csv_header + '\n')
                 for csv_line in csv_content:
                     file.writelines(csv_line + '\n')
 
-            df = pd.read_csv('output.csv')
+            df = pd.read_csv('output/output.csv')
             df.plot()
             plt.show()
 
         wcrt = sum(task.wcrt for task in TT)
 
-        return schedule, wcrt
+        return schedule, wcrt, True

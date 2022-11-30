@@ -1,72 +1,72 @@
 #!/usr/bin/env python3
-
 import libraries as libs
+import os
+import sys
 
-# This is a sample Python script.
+from pprint import pformat
+import maps
+from immutables import Map
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-# CONSTANTS
-ET = []
-TT = []
-
-def search_solution(csv):
-    TT, ET = get_tasks_from_csv(csv)
-
-    sep_counter = libs.Functions.count_separations(ET)
-
-    # Get an initial solution to start the simulated annealing later
-    initial_solution = libs.Solution.schedule(TT, ET)
-
-    solutions = []
-
-    attempts = 10
-    while attempts > 0:
-        # Trigger simulated annealing
-        proposed_solution = libs.simulated_annealing(initial_solution, TT, ET)
-
-        # Validate proposed_solution cost
-        if proposed_solution.cost == 0:
-            continue
-
-        # Validate proposed_solution has right amount of PTs
-        if proposed_solution.PT_created < sep_counter:
-            continue
-
-        solutions.append(proposed_solution)
-
-        attempts -= 1
-
-    # Chose solution based on the min cost
-    final_solution = libs.Solution.select_best_solution(solutions)
-
-    libs.Functions.print_schedule(final_solution.schedule)
-
-    return final_solution, solutions
-
-
-def get_tasks_from_csv(csv):
-    # Extract time triggered tasks from csv
-    time_triggered_tasks = libs.CSVReader.get_tasks(csv, 'TT', False)
-    if (len(time_triggered_tasks) <= 0):
-        print(f"<{csv}> is empty or was not properly formed")
-        exit(1)
-
-    # Extract event triggered tasks from csv
-    event_triggered_tasks = libs.CSVReader.get_tasks(csv, 'ET', False)
-    if (len(event_triggered_tasks) <= 0):
-        print(f"<{csv}> has no event triggered tasks")
-
-    return time_triggered_tasks, event_triggered_tasks
-
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # Ask user for file input
-    csv = input("CSV path file: ") or 'resources/tasks.txt'
+    args = libs.Cli.cli()
+    # allow user to add csv as argument else it will ask for input
+    if args.csv is None:
+        # Ask user for file input
+        csv = input("CSV path file: ") or 'resources/tasks.txt'
+    else:
+        csv = args.csv
 
-    # Init scheduling
-    solution = search_solution(csv)
+    hashseed = os.getenv('PYTHONHASHSEED')
+    if not hashseed:
+        os.environ['PYTHONHASHSEED'] = args.seed
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    #Initial Condition
+    # Read CSV for Tasks
+    TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
+    # Divide ET into Polling servers zeros are randomly placed
+    sublistET = libs.PollingServer.get_event_sublists(ET, args.seed)
+    print(f'LCM: TT: {libs.Functions.lcm(TT)}')
+    for listET in sublistET:
+        print(f'LCM: ET: PS_{listET}: {libs.Functions.lcm(sublistET[listET])}')
+
+    for t in TT:
+        print(f'{t}')
+        print(f'Task Hash : {t.__hash__()}')
+
+    PT = []
+    for ps in sublistET:
+        testTask = libs.TaskModel(name=f'PT{ps}',
+                                  computation=libs.Functions.computation(sublistET[ps]),
+                                  period=libs.Functions.lcm(sublistET[ps]),
+                                  priority=7,
+                                  type='PT',
+                                  deadline=libs.Functions.deadline(sublistET[ps]),
+                                  separation=ps,
+                                  assigned_events=(sublistET[ps])
+                                  )
+        PT.append(testTask)
+
+    for t in PT:
+        print(f'{t}')
+        print(f'Task Hash : {t.__hash__()}')
+
+    schedule1, wcrt1, isSchedulable1 = libs.AlgoOne.scheduling_TT(TT, visuals=args.plot)
+    schedule2, wcrt2, isSchedulable2 = libs.AlgoOne.scheduling_TT(PT, visuals=args.plot)
+
+    schedule3, wcrt3, isSchedulable3 = libs.AlgoOne.scheduling_TT(TT+PT, visuals=args.plot)
+
+    print(f'wcrt: {wcrt1}, schedulable={isSchedulable1}')
+    print(f'wcrt: {wcrt2}, schedulable={isSchedulable2}')
+    print(f'wcrt: {wcrt3}, schedulable={isSchedulable3}')
+
+    #libs.Solution.schedule(TT, PT)
+    #print(f'{testTask}')
+    #solution = libs.Solution.search_solution(csv)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

@@ -9,11 +9,13 @@ from unittest import TestCase
 
 rel_path = os.path.realpath(os.path.dirname(__file__))
 
+
 class AlgoOneTest(TestCase):
+
     def test_successful_scheduling_of_two_TT(self):
         inputTasks = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks1.txt', 'TT')
 
-        schedule, WRCT = libs.AlgoOne.scheduling_TT(inputTasks)
+        schedule, WRCT, schedulable = libs.AlgoOne.scheduling_TT(inputTasks)
 
         # libs.Functions.printSchedule(schedule)
 
@@ -53,7 +55,7 @@ class AlgoOneTest(TestCase):
     def test_successful_scheduling_of_three_TT(self):
         inputTasks = libs.CSVReader.get_tasks(f'{rel_path}/../resources/test/data/tasks2.txt', 'TT')
 
-        schedule, WRCT = libs.AlgoOne.scheduling_TT(inputTasks)
+        schedule, WRCT, schedulable = libs.AlgoOne.scheduling_TT(inputTasks)
 
         # libs.Functions.printSchedule(schedule)
 

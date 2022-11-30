@@ -24,6 +24,21 @@ class Functions():
         return np.lcm.reduce(periods)
 
     @staticmethod
+    def computation(tasks, verbose=False):
+        compute = [task.computation for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return sum(compute)
+
+    @staticmethod
+    def deadline(tasks, verbose=False):
+        compute = [task.deadline for task in tasks]
+        if verbose:
+            print(f'{compute}')
+        return min(compute)
+
+
+    @staticmethod
     def get_factors(number: int):
         factors = []
         factor = 1
@@ -52,7 +67,7 @@ class Functions():
         factor = random.choice(lcmFactors)
 
         # return a PT period that is in harmony with lcm
-        return int(lcm/factor)
+        return int(factor) if factor >= 2000 else 2000
 
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
@@ -85,6 +100,19 @@ class Functions():
 
         return len(separations)
 
+    @staticmethod
+    def dict_hash(the_dict, *ignore):
+        if ignore:  # Sometimes you don't care about some items
+            interesting = the_dict.copy()
+            for item in ignore:
+                if item in interesting:
+                    interesting.pop(item)
+            the_dict = interesting
+        result = hashlib.sha1(
+            '%s' % sorted(the_dict.items())
+        ).hexdigest()
+        return result
+
 
 class Debug_Output:
     @staticmethod
@@ -96,3 +124,10 @@ class Debug_Output:
         print(f"Deadline: {Task.deadline}")
         print(f"Period: {Task.period}")
         print(f"Current time after execution: {time + Task.computation}")
+
+    @staticmethod
+    def show_solution(message, solution):
+        print(f"\n {message}"
+              f"cost: {solution.cost} "
+              f"created_PT: {solution.PT_created} and "
+              f"schedulable: {solution.schedulable}")
