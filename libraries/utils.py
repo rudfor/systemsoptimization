@@ -13,12 +13,12 @@ class Functions():
                 task = ti
         return task
 
-    @staticmethod
-    def update_duration(TT, task):
-        for ti in TT:
-            if ti.name == task.name:
-                ti.computation = task.computation
-        return TT
+    # @staticmethod
+    # def update_duration(TT, task):
+    #     for ti in TT:
+    #         if ti.name == task.name:
+    #             ti.computation = task.computation
+    #     return TT
 
     @staticmethod
     def lcm(tasks):
@@ -60,9 +60,11 @@ class Functions():
     #     return int(random.randint(1, period))
 
     @staticmethod
+    # lcm of time triggered task
     def get_polling_task_period(lcm, previous_period = None):
         # get lcm factors
         lcmFactors = Functions.get_factors(lcm)
+
         lcmFactors = [x for x in lcmFactors if x >= 500 and x <= 6000]
         # print('lcmFactors', lcmFactors)
 
@@ -92,7 +94,6 @@ class Functions():
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
         # print('TT_WCRT + ET_WCRT', TT_WCRT, ET_WCRT)
-        # sys.exit()
         return TT_WCRT + ET_WCRT
 
     @staticmethod

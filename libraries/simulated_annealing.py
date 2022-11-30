@@ -8,6 +8,9 @@ def neighbor(solution):
     events_grouped = libs.Functions.get_event_sublists(solution.config.ET)
 
     lcm = libs.Functions.lcm(solution.config.TT)
+
+    # MUTATE THE PTs INSIDE THE CONFIG
+    # config structure { TT, ET, PT }
     for pt in solution.config.PT:
         # Mutate period
         pt.period = libs.Functions.get_polling_task_period(lcm, pt.period)
@@ -30,12 +33,13 @@ def simulated_annealing(initial_solution):
 
     current_temp = initial_temp
 
+    # SET CURRENT WITH INITIAL SOLUTION
     # Start by initializing the current solution with the initial solution
     current_solution = initial_solution
     solution = current_solution
 
     while current_temp > final_temp:
-        # Find a new neighbor solution
+        # FIND NEIGHBOR SOLUTION
         proposed_solution = neighbor(current_solution)
 
         # Check if possible is better
@@ -57,4 +61,5 @@ def simulated_annealing(initial_solution):
         # cool the temperature
         current_temp -= cooling_rate
 
+    # SA FINAL SOLUTION
     return solution

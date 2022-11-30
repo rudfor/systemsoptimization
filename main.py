@@ -21,6 +21,10 @@ if __name__ == '__main__':
     else:
         csv = args.csv
 
+    # TODO: Pass all bellow comments into the neighbor() in simulated_annealing.py
+    #  and get_init_solution() in solution.py
+
+
     # hashseed = os.getenv('PYTHONHASHSEED')
     # if not hashseed:
     #     os.environ['PYTHONHASHSEED'] = args.seed
@@ -28,6 +32,7 @@ if __name__ == '__main__':
 
     #Initial Condition
     # Read CSV for Tasks
+
     TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
 
     # Divide ET into Polling servers zeros are randomly placed
@@ -44,7 +49,7 @@ if __name__ == '__main__':
     # for ps in sublistET:
     #     testTask = libs.TaskModel(name=f'PT{ps}',
     #                               computation=libs.Functions.computation(sublistET[ps]),
-    #                               period=libs.Functions.lcm(sublistET[ps]),
+    #                               period=libs.Functions.lcm(sublistET[ps]), this should be
     #                               priority=7,
     #                               type='PT',
     #                               deadline=libs.Functions.deadline(sublistET[ps]),
@@ -68,6 +73,8 @@ if __name__ == '__main__':
 
     #libs.Solution.schedule(TT, PT)
     #print(f'{testTask}')
+
+    # START SEARCHING OF A SCHEDULE
     solution = libs.Solution.search_solution(csv)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
