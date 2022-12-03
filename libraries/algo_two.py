@@ -64,7 +64,7 @@ class AlgoTwo:
         # print(f"ET lcm: ", T)
 
         responseTime = 0
-        response_times = dict()
+        # response_times = dict()
         for task in ET:
             time = 0
 

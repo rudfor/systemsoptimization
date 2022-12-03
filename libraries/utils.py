@@ -34,7 +34,7 @@ class Functions():
         if previous_deadline is None:
             next_deadline = min(deadline)
         else:
-            next_deadline = previous_deadline + random.choice([-100, -50, 0, 50, 100])
+            next_deadline = min(deadline) + random.choice([-100, -50, 0, 50, 100])
         return next_deadline
 
 
@@ -59,12 +59,12 @@ class Functions():
 
     @staticmethod
     # lcm of time triggered task
-    def get_polling_task_period(lcmTT, lcmET, previous_period = None):
+    def get_polling_task_period(lcmTT, lcmET, previous_period=None):
         # get lcm factors
         lcmFactors = Functions.get_factors(lcmTT)
 
         # Keep factors bigger than lcmET and smaller than lcmTT/2
-        lcmFactors = [x for x in lcmFactors if x <= lcmET or x >= lcmTT/2]
+        lcmFactors = [x for x in lcmFactors if x >= 1000 or x <= lcmTT/2]
         # print('lcmFactors', lcmFactors)
 
         if previous_period is None:
@@ -81,7 +81,7 @@ class Functions():
         return int(factor)
 
     @staticmethod
-    def get_polling_task_budget(sublistET, previous_budget = None):
+    def get_polling_task_budget(sublistET, previous_budget=None):
         # Get enough budget to cover the assigned tasks
         compute = [task.deadline for task in sublistET]
         next_budget = sum(compute)
@@ -101,7 +101,6 @@ class Functions():
 
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
-        # print('TT_WCRT + ET_WCRT', TT_WCRT, ET_WCRT)
         return TT_WCRT + ET_WCRT
 
     @staticmethod
