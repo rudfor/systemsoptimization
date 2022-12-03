@@ -11,7 +11,7 @@ class AlgoOne:
     # algorithm 1
     """
     @staticmethod
-    def scheduling_TT(TT, time_limit=10000, visuals = False):
+    def scheduling_TT(TT, visuals = False):
         """
         Data: TT task set TT T including polling server tasks T poll
         Result: TT schedule table (σ) and WCRTs of TT tasks (W CRTi)
@@ -36,7 +36,7 @@ class AlgoOne:
         FAIL_SCHEDULE = []
 
         # Get least common multiple of task priorities
-        time_limit = libs.Functions.lcm(copy.deepcopy(TT)) or time_limit
+        time_limit = libs.Functions.lcm(copy.deepcopy(TT))
         # print(f"\n TT lcm: ", time_limit)
 
         csv_header = ""
@@ -126,6 +126,6 @@ class AlgoOne:
             df.plot()
             plt.show()
 
-        wcrt = sum(task.wcrt for task in TT)
+        WCRT_TT = [task.wcrt for task in TT]
 
-        return schedule, wcrt, True
+        return schedule, round(sum(WCRT_TT)/len(WCRT_TT)), True

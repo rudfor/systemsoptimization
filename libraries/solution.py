@@ -97,7 +97,8 @@ class Solution:
         # Distribute events
         events_grouped = libs.Functions.get_event_sublists(ET)
 
-        lcm = libs.Functions.lcm(TT)
+        lcmTT = libs.Functions.lcm(TT)
+        lcmET = libs.Functions.lcm(ET)
 
         # SET AN INITIAL EVENT DISTRIBUTION AND PT HYPERPARAMETERS
         PTs = []
@@ -107,7 +108,7 @@ class Solution:
             pt = libs.get_polling(separation, computation, 2000, events)
 
             # Init period
-            pt.period = libs.Functions.get_polling_task_period(lcm)
+            pt.period = libs.Functions.get_polling_task_period(lcmTT, lcmET)
 
             # Init budget
             pt.budget = libs.Functions.get_polling_task_budget(ET)
@@ -115,7 +116,7 @@ class Solution:
             # Init assigned events
             pt.assignedEvents = events_grouped[pt.separation]
 
-            pt.deadline = events_grouped[pt.separation]
+            pt.deadline = libs.Functions.get_pooling_task_deadline(events_grouped[pt.separation])
 
             PTs.append(pt)
 

@@ -98,7 +98,8 @@ class AlgoTwo:
                     # print('task name', task.name, 'supply', supply, 'demand', demand)
                     # responseTime ← t;
                     responseTime = time
-                    response_times[task] = responseTime
+                    task.wcrt = responseTime
+                    # response_times[task] = responseTime
                     break
 
                 # Tick the clock
@@ -112,4 +113,5 @@ class AlgoTwo:
                 # print('responseTime:', responseTime, 'Di:', task.deadline)
                 return False, responseTime
 
-        return True, sum(rt for t, rt in response_times.items())
+        # return True, [rt for t, rt in response_times.items()]
+        return True, [task.wcrt for task in ET]

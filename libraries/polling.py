@@ -13,9 +13,9 @@ class PollingServer:
         if len(PT) < 1:
             return
 
-        ET_WCRT = 0
+        ET_WCRT = []
         for pt in PT:
-            schedulable, responseTime = libs.AlgoTwo.scheduling_ET(
+            schedulable, responseTimes = libs.AlgoTwo.scheduling_ET(
                 pt.budget,
                 pt.period,
                 pt.period,
@@ -26,9 +26,9 @@ class PollingServer:
             if not schedulable:
                 return False, 50000
 
-            ET_WCRT += responseTime
+            ET_WCRT += responseTimes
 
-        return True, ET_WCRT
+        return True, round(sum(ET_WCRT)/len(ET_WCRT))
 
     """
     Adds Polling Tasks to the TT

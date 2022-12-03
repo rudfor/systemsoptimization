@@ -7,16 +7,20 @@ def neighbor(solution):
     # Redistribute events
     events_grouped = libs.Functions.get_event_sublists(solution.config.ET)
 
-    lcm = libs.Functions.lcm(solution.config.TT)
+    lcmTT = libs.Functions.lcm(solution.config.TT)
+    lcmET = libs.Functions.lcm(solution.config.ET)
 
     # MUTATE THE PTs INSIDE THE CONFIG
     # config structure { TT, ET, PT }
     for pt in solution.config.PT:
         # Mutate period
-        pt.period = libs.Functions.get_polling_task_period(lcm, pt.period)
+        pt.period = libs.Functions.get_polling_task_period(lcmTT, lcmET, pt.period)
 
         # Mutate budget
         pt.budget = libs.Functions.get_polling_task_budget(solution.config.ET, pt.budget)
+
+        # Mutate deadline
+        pt.deadline = libs.Functions.get_pooling_task_deadline(events_grouped[pt.separation], pt.deadline)
 
         # Set new events to PTs
         pt.assignedEvents = events_grouped[pt.separation]

@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # for ps in sublistET:
     #     testTask = libs.TaskModel(name=f'PT{ps}',
     #                               computation=libs.Functions.computation(sublistET[ps]),
-    #                               period=libs.Functions.lcm(sublistET[ps]), this should be
+    #                               period=libs.Functions.lcm(sublistET[ps]),
     #                               priority=7,
     #                               type='PT',
     #                               deadline=libs.Functions.deadline(sublistET[ps]),

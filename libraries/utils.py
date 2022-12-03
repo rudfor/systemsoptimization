@@ -13,13 +13,6 @@ class Functions():
                 task = ti
         return task
 
-    # @staticmethod
-    # def update_duration(TT, task):
-    #     for ti in TT:
-    #         if ti.name == task.name:
-    #             ti.computation = task.computation
-    #     return TT
-
     @staticmethod
     def lcm(tasks):
         periods = [task.period for task in tasks]
@@ -33,11 +26,16 @@ class Functions():
         return sum(compute)
 
     @staticmethod
-    def deadline(tasks, verbose=False):
-        compute = [task.deadline for task in tasks]
+    def get_pooling_task_deadline(tasks, previous_deadline=None, verbose=False):
+        deadline = [task.deadline for task in tasks]
         if verbose:
-            print(f'{compute}')
-        return min(compute)
+            print(f'{deadline}')
+
+        if previous_deadline is None:
+            next_deadline = min(deadline)
+        else:
+            next_deadline = previous_deadline + random.choice([-100, -50, 0, 50, 100])
+        return next_deadline
 
 
     @staticmethod
@@ -61,33 +59,43 @@ class Functions():
 
     @staticmethod
     # lcm of time triggered task
-    def get_polling_task_period(lcm, previous_period = None):
+    def get_polling_task_period(lcmTT, lcmET, previous_period = None):
         # get lcm factors
-        lcmFactors = Functions.get_factors(lcm)
+        lcmFactors = Functions.get_factors(lcmTT)
 
-        lcmFactors = [x for x in lcmFactors if x >= 500 and x <= 6000]
+        # Keep factors bigger than lcmET and smaller than lcmTT/2
+        lcmFactors = [x for x in lcmFactors if x <= lcmET or x >= lcmTT/2]
         # print('lcmFactors', lcmFactors)
 
-        if previous_period is not None:
+        if previous_period is None:
+            # pick any factor to initialize the period
+            factor = random.choice(lcmFactors)
+        else:
+            # Mutate period by going to the next or previous factor
+            # If the current is the last factor it will re initialize the period
             previous_index = lcmFactors.index(previous_period)
             next_index = previous_index + random.randint(-1, 1)
             factor = lcmFactors[next_index] if next_index <= len(lcmFactors)-1 else random.choice(lcmFactors)
-        else:
-            # pick any factor
-            factor = random.choice(lcmFactors)
 
         # return a PT period that is in harmony with lcm
         return int(factor)
 
     @staticmethod
-    def get_polling_task_budget(ET, previous_budget = None):
-        next_budget = 0
-        if previous_budget is None:
-            next_budget = 0
-            for event in ET:
-                next_budget += event.computation
-        else:
-            next_budget = previous_budget + 100
+    def get_polling_task_budget(sublistET, previous_budget = None):
+        # Get enough budget to cover the assigned tasks
+        compute = [task.deadline for task in sublistET]
+        next_budget = sum(compute)
+
+        # Pad the budget to allow flexibility
+        # next_budget += 100
+
+
+        # next_budget = 0
+        # if previous_budget is None:
+        #     Initial budget
+        # else:
+        #     Mutated budget
+            # next_budget = previous_budget + 100
 
         return int(next_budget)
 
