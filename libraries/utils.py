@@ -101,7 +101,8 @@ class Functions():
 
     @staticmethod
     def cost_function(TT_WCRT, ET_WCRT):
-        return TT_WCRT + ET_WCRT
+        ALL_WCRT = TT_WCRT + ET_WCRT
+        return round(sum(ALL_WCRT)/len(ALL_WCRT))
 
     @staticmethod
     def get_separations(ET):

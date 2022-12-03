@@ -32,7 +32,7 @@ class AlgoOne:
         # as a 'solution' when TT and PT are not schedulable.
         # We do this in order to penalize the 'wrong solutions' so then
         # the simulated_annealing will discard them and try another solution
-        FAIL_WCRT = 50000
+        FAIL_WCRT = [50000]
         FAIL_SCHEDULE = []
 
         # Get least common multiple of task priorities
@@ -126,6 +126,6 @@ class AlgoOne:
             df.plot()
             plt.show()
 
-        WCRT_TT = [task.wcrt for task in TT]
+        # WCRT_TT = [task.wcrt for task in TT]
 
-        return schedule, round(sum(WCRT_TT)/len(WCRT_TT)), True
+        return schedule, [task.wcrt for task in TT], True

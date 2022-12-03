@@ -11,7 +11,7 @@ class PollingServer:
         # Stop if no polling servers
         # print('len(PT)', len(PT))
         if len(PT) < 1:
-            return
+            return True, []
 
         ET_WCRT = []
         for pt in PT:
@@ -28,7 +28,7 @@ class PollingServer:
 
             ET_WCRT += responseTimes
 
-        return True, round(sum(ET_WCRT)/len(ET_WCRT))
+        return True, ET_WCRT
 
     """
     Adds Polling Tasks to the TT
