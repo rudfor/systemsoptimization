@@ -8,7 +8,7 @@ class Seed:
         self.PT_created = PT_created
         self.schedulable = schedulable
 
-
+# Not sure if this is needed anymore since we have all the PT in the config model
 class PollingServer:
     def __init__(self, ETs = []):
         self.et_list = ETs
