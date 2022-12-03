@@ -31,7 +31,7 @@ class Solution:
         # Get schedule table and worst-case response times
         TT_and_PT = TT + PT
         schedule, TT_WCRT, TT_schedulable = libs.AlgoOne.scheduling_TT(copy.deepcopy(TT_and_PT))
-        print(TT_WCRT)
+        # print(TT_WCRT)
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
