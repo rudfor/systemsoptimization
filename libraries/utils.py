@@ -26,6 +26,14 @@ class Functions():
         return sum(compute)
 
     @staticmethod
+    def deadline(tasks, verbose=False):
+        deadline = [task.deadline for task in tasks]
+        if verbose:
+            print(f'{deadline}')
+        return min(deadline)
+
+
+    @staticmethod
     def get_pooling_task_deadline(tasks, previous_deadline=None, verbose=False):
         deadline = [task.deadline for task in tasks]
         if verbose:

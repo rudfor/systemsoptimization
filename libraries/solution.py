@@ -54,6 +54,7 @@ class Solution:
 
         return best_solution
 
+
     @staticmethod
     def search_solution(csv):
         TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
@@ -65,6 +66,43 @@ class Solution:
 
         solutions = []
 
+        # TODO: All this can also be removed and just increase the SA initial temperature
+        #  to force it run longer. Just keep one single invoke of SA in the end. Unless we
+        #  never make it good enough on one single go and then we can keep the more attempts.
+        while len(solutions) < 5:
+            print('Accepted solutions found so far: ', len(solutions))
+
+            # TRIGGER SA
+            proposed_solution = libs.simulated_annealing(initial_solution)
+            libs.Debug_Output.show_solution('SA proposed solution for TTs and TPs with ', proposed_solution)
+
+            # Validate solution is schedulable
+            if not proposed_solution.schedulable:
+                continue
+
+            # Validate proposed_solution cost
+            if proposed_solution.cost == 0:
+                continue
+
+            solutions.append(proposed_solution)
+
+        # Chose solution based on the min cost
+        final_solution = libs.Solution.select_best_solution(solutions)
+
+        libs.Functions.print_schedule(final_solution.schedule)
+
+        return final_solution, solutions
+
+    @staticmethod
+    def search_solution2(csv):
+        TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
+
+        # GET INITIAL SOLUTION
+        # It will be used to start the optimization of simulated annealing later
+        initial_solution = Solution.get_init_solution(TT, ET)
+        libs.Debug_Output.show_solution('Initial solution for TTs and TPs with ', initial_solution)
+
+        solutions = []
         # TODO: All this can also be removed and just increase the SA initial temperature
         #  to force it run longer. Just keep one single invoke of SA in the end. Unless we
         #  never make it good enough on one single go and then we can keep the more attempts.
@@ -126,3 +164,4 @@ class Solution:
 
         # CREATE AND RETURN INITIAL SOLUTION
         return libs.Solution.schedule(config)
+

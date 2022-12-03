@@ -27,8 +27,19 @@ class CSVReader():
     @staticmethod
     def get_tasks(csf_file, task_type='TT', verbose=False):
         list = []
+        csv_separator = None
         with open(csf_file) as file:
-            csv_reader = csv.reader(file, delimiter=',')
+            dialect = csv.Sniffer().sniff(file.read())
+            if dialect.delimiter == ',':
+                csv_separator = ','
+            elif dialect.delimiter == ';':
+                csv_separator = ';'
+            else:
+                print(f'Invalid Format: {file.name}')
+
+        with open(csf_file) as file:
+            csv_reader = csv.reader(file, delimiter=csv_separator)
+
             for row in csv_reader:
                 if not len(row):
                     if verbose: print(f"EMPTY LINE")
