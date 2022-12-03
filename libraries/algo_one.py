@@ -11,7 +11,11 @@ class AlgoOne:
     # algorithm 1
     """
     @staticmethod
+<<<<<<< HEAD
     def scheduling_TT(TT, visuals = False):
+=======
+    def scheduling_TT(TT, time_limit=10000, visuals = False, return_df=False):
+>>>>>>> 884a0c1 (fix display and schedule one)
         """
         Data: TT task set TT T including polling server tasks T poll
         Result: TT schedule table (σ) and WCRTs of TT tasks (W CRTi)
@@ -116,16 +120,24 @@ class AlgoOne:
                 # libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
             return FAIL_SCHEDULE, FAIL_WCRT, False
 
-        if visuals:
-            with open("output/output.csv", "w") as file:
-                file.write(csv_header + '\n')
-                for csv_line in csv_content:
-                    file.writelines(csv_line + '\n')
+        with open("output/output.csv", "w") as file:
+            file.write(csv_header + '\n')
+            for csv_line in csv_content:
+                file.writelines(csv_line + '\n')
 
-            df = pd.read_csv('output/output.csv')
+        df = pd.read_csv('output/output.csv')
+        if visuals:
             df.plot()
             plt.show()
 
+<<<<<<< HEAD
         # WCRT_TT = [task.wcrt for task in TT]
 
         return schedule, [task.wcrt for task in TT], True
+=======
+        wcrt = sum(task.wcrt for task in TT)
+        if return_df:
+            return schedule, wcrt, df, True
+        else:
+            return schedule, wcrt, True
+>>>>>>> 884a0c1 (fix display and schedule one)

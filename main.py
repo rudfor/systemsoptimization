@@ -2,6 +2,8 @@
 import libraries as libs
 import os
 import sys
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from pprint import pformat
 # import maps
@@ -30,6 +32,7 @@ if __name__ == '__main__':
     #     os.environ['PYTHONHASHSEED'] = args.seed
     #     os.execv(sys.executable, [sys.executable] + sys.argv)
 
+    verbosity = 3
     #Initial Condition
     # Read CSV for Tasks
 
@@ -45,6 +48,7 @@ if __name__ == '__main__':
     #     print(f'{t}')
     #     print(f'Task Hash : {t.__hash__()}')
 
+<<<<<<< HEAD
     # PT = []
     # for ps in sublistET:
     #     testTask = libs.TaskModel(name=f'PT{ps}',
@@ -70,6 +74,57 @@ if __name__ == '__main__':
     # print(f'wcrt: {wcrt1}, schedulable={isSchedulable1}')
     # print(f'wcrt: {wcrt2}, schedulable={isSchedulable2}')
     # print(f'wcrt: {wcrt3}, schedulable={isSchedulable3}')
+=======
+    if (verbosity > 3):
+        for t in TT:
+            print(f'{t}')
+            if (verbosity > 4): print(f'Task Hash : {t.__hash__()}')
+
+    PT = []
+    for ps in sublistET:
+        # Create a new Polling Task Server using a group of ET tasks
+        testTask = libs.TaskModel(name=f'PT{ps}',
+                                  computation=libs.Functions.computation(sublistET[ps]),
+                                  period=libs.Functions.lcm(sublistET[ps]),
+                                  priority=7,
+                                  type='PT',
+                                  deadline=libs.Functions.deadline(sublistET[ps]),
+                                  separation=ps,
+                                  assigned_events=(sublistET[ps])
+                                  )
+        PT.append(testTask)
+
+    if (verbosity > 3):
+        for t in PT:
+            print(f'{t}')
+            print(f'Task Hash : {t.__hash__()}')
+    # SCHEDULE
+    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(TT, visuals=args.plot, return_df=True)
+    schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(PT, visuals=args.plot, return_df=True)
+
+    schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(TT+PT, visuals=args.plot, return_df=True)
+
+    if args.plot:
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        fig.suptitle('Horizontally stacked subplots')
+        data_frame1_diff = data_frame1.diff()
+        data_frame1_diff.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+        #ax1.set_yscale('log')
+        plt.legend(ncol=3)
+        data_frame2_diff = data_frame2.diff()
+        data_frame2_diff.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+        #ax2.set_yscale('log')
+        plt.legend(ncol=3)
+        data_frame3.plot(ax=ax3, label='auto label', title='Time Triggered and Polling Server')
+        #ax3.set_yscale('log')
+        plt.legend(ncol=3)
+        plt.show()
+        #fig, (ax1, ax2) = plt.subplots(1, 2)
+
+    print(f'wcrt: {wcrt1}, schedulable={isSchedulable1}')
+    print(f'wcrt: {wcrt2}, schedulable={isSchedulable2}')
+    print(f'wcrt: {wcrt3}, schedulable={isSchedulable3}')
+>>>>>>> 884a0c1 (fix display and schedule one)
 
     #libs.Solution.schedule(TT, PT)
     #print(f'{testTask}')
