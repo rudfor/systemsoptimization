@@ -50,23 +50,20 @@ if __name__ == '__main__':
     initial_bid.showPT()
     bid2 = initial_bid.get_neighbour()
     bid2.showPT()
-    print(f'TT and PT: {initial_bid.TT}\n{initial_bid.PT}\n{initial_bid.TT + initial_bid.PT}')
+    print(f'TT: {initial_bid.TT}\n\nPT: {initial_bid.PT}\n\nTT and PT:{initial_bid.TT + initial_bid.PT}\n\n')
     TT = initial_bid.TT + initial_bid.PT
-    print(f'TT and PT: {TT}\n')
     schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(initial_bid.TT,
                                                                                visuals=False, return_df=True)
     data_frame1.plot(label='auto label', title='Time Triggered Tasks')
-    plt.show()
 
     schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(initial_bid.PT,
                                                                                visuals=False, return_df=True)
     data_frame2.plot(label='auto label', title='Time Triggered Tasks')
-    plt.show()
 
-    schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(initial_bid.TT+initial_bid.PT,
+    TT = initial_bid.TT + initial_bid.PT
+    schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(TT,
                                                                                visuals=False, return_df=True)
     data_frame3.plot(label='auto label', title='Time Triggered Tasks')
-    plt.show()
 
     bid3 = bid2.get_neighbour()
 

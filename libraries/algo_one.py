@@ -70,7 +70,7 @@ class AlgoOne:
                 if t % T.period == 0:
                     T.r = t
                     # T.computation = T.init_computation
-                    T.reset_compute()
+                    T.reset_compute(6)
                     T.deadline = T.init_deadline + t
                     # print('\n reset on period', T.name, T.computation, T.init_deadline, T.deadline, t)
 
@@ -94,8 +94,8 @@ class AlgoOne:
 
                 # Since we execute the task in the current second then we
                 # reduce by one time second the remaining duration of the task
-                ti.computation -= 1
-                #ti.compute()
+                #ti.computation -= 1
+                ti.compute()
 
                 # this is the 3rd time i move the code down here
                 # Check time is behind task deadline
