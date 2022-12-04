@@ -40,11 +40,29 @@ if __name__ == '__main__':
 
     # Initial Condition
     initial_bid = libs.Bid(csv, args.seed, args.verbosity)
+    ET_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(initial_bid.PT)
+
+    # Cost and result function
+    # ALGO 1 (TT)
+    # foreach PT
+    # Algot 2 (ET)
     print(f'intial BID:')
+    initial_bid.showPT()
+    bid2 = initial_bid.get_neighbour()
+    bid2.showPT()
+    print(f'TT and PT: {initial_bid.TT}\n{initial_bid.PT}\n{initial_bid.TT + initial_bid.PT}')
+    TT = initial_bid.TT + initial_bid.PT
+    print(f'TT and PT: {TT}\n')
+    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(TT,
+                                                                               visuals=False, return_df=True)
+
+    data_frame1.plot(label='auto label', title='Time Triggered Tasks')
+    plt.show()
+    bid3 = bid2.get_neighbour()
     #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
     #libs.Solution.schedule(initial_bid,4)
-    libs.Debug_Output.rudolf_test(initial_bid, args.plot)
-    print(f'Debug OUtput:')
+    #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
+    print(f'Debug Output:')
 
     # print(f'{testTask}')
 

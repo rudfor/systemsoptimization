@@ -260,7 +260,8 @@ class Debug_Output:
             fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, 1)
             fig.suptitle('Horizontally stacked subplots')
             # data_frame1_diff = data_frame1.diff()
-            data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+            #data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+            data_frame1.plot(label='auto label', title='Time Triggered Tasks')
             # ax1.set_yscale('log')
             plt.legend(ncol=1)
 

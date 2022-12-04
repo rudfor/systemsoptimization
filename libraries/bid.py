@@ -27,7 +27,7 @@ class Bid:
                                       deadline=libs.Functions.deadline(sublistET[ps]),
                                       separation=ps,
                                       assigned_events=(sublistET[ps]),
-                                      budget = libs.Functions.get_polling_task_budget(sublistET[ps])
+                                      budget=libs.Functions.get_polling_task_budget(sublistET[ps])
                                       )
             PT.append(testTask)
         self.PT = PT
@@ -50,6 +50,13 @@ class Bid:
     def show(self, verbose=False):
         self.showTT(verbose)
         self.showPT(verbose)
+
+#    def get_neighbour(self):
+#        randdom_choice:
+#            get_neighbour_move()
+#            get_neighrbor_swap()
+#            slit/merge PT()
+
 
     def get_neighbour(self, variation=3):
         """
@@ -76,6 +83,7 @@ class Bid:
             if ps_count<=1:
                 return neighbour
 
+            # Zeros {Task: # PS: #}
             choice = random.choice(zeros_list)
             source_ps = choice.get("ps")
             source_task = choice.get("task")
@@ -158,7 +166,7 @@ class Bid:
         return neighbour
 
 
-
+    # DEBUGGING ONLY
     @staticmethod
     def search_solution(csv, seed, plot=False, verbosity=0):
         TT, ET = libs.CSVReader.get_tasks_from_csv(csv)

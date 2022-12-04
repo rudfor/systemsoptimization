@@ -59,6 +59,7 @@ def simulated_annealing(initial_solution):
                 exp = np.exp(-cost_diff / current_temp)
             except:
                 print('error calculating exp', '-cost_diff', cost_diff, 'current_temp', current_temp)
+            # Add to Random DEBUG VERIFY
             if random.uniform(0, 1) < exp:
                 solution = proposed_solution
 

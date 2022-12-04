@@ -62,7 +62,7 @@ class AlgoOne:
                 if T.computation > 0 and T.deadline <= t:
                     libs.Debug_Output.message(f"\n Deadline Missed", t, T)
                     if return_df:
-                        return FAIL_SCHEDULE, FAIL_WCRT, pd.DataFrame, False
+                        return FAIL_SCHEDULE, FAIL_WCRT, pd.DataFrame(), False
                     else:
                         return FAIL_SCHEDULE, FAIL_WCRT, False
 

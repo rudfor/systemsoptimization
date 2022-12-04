@@ -8,7 +8,7 @@ class AlgoTwo:
     """
     # algorithm 2
     """
-
+    # ET is USblist only
     @staticmethod
     def scheduling_ET(Cp, Tp, Dp, ET):
         """

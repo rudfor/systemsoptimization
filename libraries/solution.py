@@ -138,8 +138,8 @@ class Solution:
         # Distribute events
         events_grouped = libs.Functions.get_event_sublists(ET)
 
-        lcmTT = libs.Functions.lcm(TT)
-        lcmET = libs.Functions.lcm(ET)
+        lcmTT = libs.Functions.lcm(TT) # Take for Null event
+        lcmET = libs.Functions.lcm(ET) # Take for Null event
 
         # SET AN INITIAL EVENT DISTRIBUTION AND PT HYPERPARAMETERS
         PTs = []
