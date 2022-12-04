@@ -37,7 +37,7 @@ class Solution:
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
-        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT,6)
+        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT)
 
         return SolutionModel(schedule, cost, TT_schedulable and PT_schedulable, config)
 

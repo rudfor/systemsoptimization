@@ -94,8 +94,8 @@ class AlgoOne:
 
                 # Since we execute the task in the current second then we
                 # reduce by one time second the remaining duration of the task
-                #ti.computation -= 1
-                ti.compute()
+                ti.computation -= 1
+                #ti.compute()
 
                 # this is the 3rd time i move the code down here
                 # Check time is behind task deadline

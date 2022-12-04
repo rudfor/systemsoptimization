@@ -263,24 +263,24 @@ class Debug_Output:
             #data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
             data_frame1.plot(label='auto label', title='Time Triggered Tasks')
             # ax1.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
 
             df_1_2 = data_frame1.compare(data_frame2)
             df_1_2.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
 
             # data_frame2_diff = data_frame2.diff()
             data_frame2.plot(ax=ax3, label='auto label', title='Polling Server ET Tasks')
             # ax2.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
 
             df_2_3 = data_frame2.compare(data_frame3)
             df_2_3.plot(ax=ax4, label='auto label', title='Polling Server ET Tasks')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
 
             data_frame3.plot(ax=ax5, label='auto label', title='Time Triggered and Polling Server')
             # ax3.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
             plt.show()
             # fig, (ax1, ax2) = plt.subplots(1, 2)
 

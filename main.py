@@ -53,12 +53,41 @@ if __name__ == '__main__':
     print(f'TT and PT: {initial_bid.TT}\n{initial_bid.PT}\n{initial_bid.TT + initial_bid.PT}')
     TT = initial_bid.TT + initial_bid.PT
     print(f'TT and PT: {TT}\n')
-    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(TT,
+    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(initial_bid.TT,
                                                                                visuals=False, return_df=True)
-
     data_frame1.plot(label='auto label', title='Time Triggered Tasks')
     plt.show()
+
+    schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(initial_bid.PT,
+                                                                               visuals=False, return_df=True)
+    data_frame2.plot(label='auto label', title='Time Triggered Tasks')
+    plt.show()
+
+    schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(initial_bid.TT+initial_bid.PT,
+                                                                               visuals=False, return_df=True)
+    data_frame3.plot(label='auto label', title='Time Triggered Tasks')
+    plt.show()
+
     bid3 = bid2.get_neighbour()
+
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+    fig.suptitle('Horizontally stacked subplots')
+    # data_frame1_diff = data_frame1.diff()
+    # data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+    data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+    # ax1.set_yscale('log')
+    plt.legend(ncol=3)
+
+    # data_frame2_diff = data_frame2.diff()
+    data_frame2.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+    # ax2.set_yscale('log')
+    plt.legend(ncol=3)
+
+    data_frame3.plot(ax=ax3, label='auto label', title='Time Triggered and Polling Server')
+    # ax3.set_yscale('log')
+    plt.legend(ncol=3)
+    plt.show()
+
     #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
     #libs.Solution.schedule(initial_bid,4)
     #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
