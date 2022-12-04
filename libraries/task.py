@@ -32,15 +32,15 @@ class TaskModel:
         self.wcrt = 0
 
     def compute(self, verbosity = 0):
-        if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
         if self.assignedEvents is not None:
+            if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
             if libs.Functions.computation(self.assignedEvents) > 0:
                 if verbosity > 3: print(f'BEFORE: {self.computation}-{self.assignedEvents}\n')
                 edf_task = min([task for task in self.assignedEvents if task.computation!=0], key=attrgetter('deadline'))
                 edf_task.computation -= 1
                 if verbosity > 3: print(f'EDF_TASK: {edf_task}\n')
                 if verbosity > 3: print(f'calculate Computation: {libs.Functions.computation(self.assignedEvents)}\n')
-                self.compusation = libs.Functions.computation(self.assignedEvents)
+                self.computation = libs.Functions.computation(self.assignedEvents)
                 deadline_list = [task.deadline for task in self.assignedEvents if task.computation != 0]
                 if not deadline_list:
                     pass
@@ -52,8 +52,8 @@ class TaskModel:
             self.computation -= 1
 
     def reset_compute(self, verbosity = 0):
-        if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
         if self.assignedEvents is not None:
+            if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
             if libs.Functions.computation(self.assignedEvents) > 0:
                 pass
         else:
