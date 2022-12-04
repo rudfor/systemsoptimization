@@ -29,7 +29,7 @@ class Bid:
                                       deadline=libs.Functions.deadline(sublistET[ps]),
                                       separation=ps,
                                       assigned_events=(sublistET[ps]),
-                                      budget=libs.Functions.get_polling_task_budget(sublistET[ps])
+                                      budget=libs.Functions.get_polling_task_budget(sublistET[ps])*2
                                       )
             PT.append(testTask)
         self.PT = PT
@@ -124,7 +124,7 @@ class Bid:
                     pt.deadline = libs.Functions.deadline(pt.assignedEvents)
                     pt.computation = libs.Functions.computation(pt.assignedEvents)
                     pt.period = libs.Functions.lcm(pt.assignedEvents)
-                    pt.budget = libs.Functions.get_polling_task_budget(pt.assignedEvents)
+                    pt.budget = libs.Functions.get_polling_task_budget(pt.assignedEvents)*2
         return neighbour
 
     def get_neighbour_swap(self, swaps=3):

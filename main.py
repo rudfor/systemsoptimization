@@ -61,6 +61,10 @@ if __name__ == '__main__':
     print(f'initial solution: {next_bid_solution}')
     next_bid.showPT()
 
+    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT,
+                                                                               visuals=False, return_df=True)
+    data_frame1.plot(label='auto label', title='Time Triggered Tasks')
+    plt.show()
     # Foreach bid:
 
     #libs.Debug_Output.ruft_debug(initial_bid, args.plot)
