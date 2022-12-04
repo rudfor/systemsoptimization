@@ -45,7 +45,9 @@ class Bid:
     def brief(self):
         return_string = f'Bid - hash: {self.__hash__()}\n'
         return_string += f'TT Tasks: {len(self.TT)}\n'
-        return_string += f'PT Tasks: {len(self.PT)}'
+        return_string += f'PS Servers: {len(self.PT)}'
+        for pt in self.PT:
+            return_string += f'  PT Tasks: {len(pt.assignedEvents)}'
         return return_string
 
 
@@ -122,6 +124,7 @@ class Bid:
                     pt.deadline = libs.Functions.deadline(pt.assignedEvents)
                     pt.computation = libs.Functions.computation(pt.assignedEvents)
                     pt.period = libs.Functions.lcm(pt.assignedEvents)
+                    pt.budget = libs.Functions.get_polling_task_budget(pt.assignedEvents)
         return neighbour
 
     def get_neighbour_swap(self, swaps=3):

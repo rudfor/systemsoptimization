@@ -24,7 +24,7 @@ class PollingServer:
 
             # print('responseTime', responseTime, 'schedulable', schedulable)
             if not schedulable:
-                return False, 500
+                return False, ET_WCRT
 
             ET_WCRT += responseTimes
 

@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # Itterate 20 times
     current_bid = initial_bid
     for a in range(6):
-        next_bid = current_bid.get_neighbour()
+        next_bid = current_bid.get_neighbour(5)
         next_bid_solution = libs.Solution.schedule_bid(next_bid)
         print(f'initial solution: {next_bid_solution}')
         current_bid = next_bid
