@@ -234,15 +234,16 @@ class Debug_Output:
               f"schedulable: {solution.schedulable}")
 
     @staticmethod
-    def rudolf_test(initial_bid, plot=False):
+    def ruft_debug(initial_bid, plot):
+        # Initial Condition
+        #initial_bid = libs.Bid(csv, args.seed, args.verbosity)
         initial_bid.showPT()
-        print(f'RF_TEST: ONE')
         bid2 = initial_bid.get_neighbour(3)
-        bid2.showPT()
-        print(f'RF_TEST: TWO')
+        # bid2.showPT()
         bid3 = initial_bid.get_neighbour_swap(3)
-        bid3.showPT()
-        print(f'RF_TEST: Three')
+        # bid3.showPT()
+        # bid3 = bid.get_neighbour_swap(3)
+        # bid3.showPT()
 
         # solution = libs.Bid.search_solution(csv, args.seed, args.plot, args.verbosity)
         # Divide ET into Polling servers zeros are randomly placed
@@ -254,32 +255,36 @@ class Debug_Output:
         schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(bid2.TT + bid3.PT, visuals=False,
                                                                                    return_df=True)
 
-        libs.AlgoOne.scheduling_TT(initial_bid.TT, initial_bid.PT)
-
         if plot:
-            fig, axes = plt.subplots(5, 1)
+            fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, 1)
             fig.suptitle('Horizontally stacked subplots')
             # data_frame1_diff = data_frame1.diff()
-            data_frame1.plot(ax=axes[1], label='auto label', title='Time Triggered Tasks')
+            data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
             # ax1.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=4)
 
-            df_1_2 = data_frame1.compare(data_frame2)
-            df_1_2.plot(ax=axes[1], label='auto label', title='Polling Server ET Tasks')
-            plt.legend(ncol=1)
+            df_1_2 = pd.concat([data_frame1, data_frame2]).drop_duplicates(keep=False)
+            # df_1_2 = data_frame1.diff(data_frame2)
+            df_1_2.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+            plt.legend(ncol=4)
 
-            # data_frame2_diff = data_frame2.diff()
-            data_frame2.plot(ax=axes[0,3], label='auto label', title='Polling Server ET Tasks')
+            data_frame2_diff = data_frame2.diff()
+            data_frame2.plot(ax=ax3, label='auto label', title='Polling Server ET Tasks')
             # ax2.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=4)
 
-            df_2_3 = data_frame2.compare(data_frame3)
-            df_2_3.plot(ax=axes[0,4], label='auto label', title='Polling Server ET Tasks')
-            plt.legend(ncol=1)
+            df_2_3_5 = data_frame2.compare(data_frame3)
+            # df_2_3 = pd.concat([data_frame2, data_frame3]).drop_duplicates(keep=False)
+            df_2_3 = data_frame2.compare(data_frame3, keep_shape=True, keep_equal=False)
+            df_2_3_4 = set(data_frame2).symmetric_difference(data_frame3)
+            df_2_3.plot(ax=ax4, label='auto label', title='Polling Server ET Tasks')
+            plt.legend(ncol=4)
 
-            data_frame3.plot(ax=axes[0,5], label='auto label', title='Time Triggered and Polling Server')
+            # print(f'{df_2_3_4}{df_2_3}{df_2_3_5}')
+
+            data_frame3.plot(ax=ax5, label='auto label', title='Time Triggered and Polling Server')
             # ax3.set_yscale('log')
-            plt.legend(ncol=1)
+            plt.legend(ncol=3)
             plt.show()
             # fig, (ax1, ax2) = plt.subplots(1, 2)
 

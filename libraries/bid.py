@@ -2,6 +2,8 @@ import copy
 import sys
 import libraries as libs
 import random
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 class Bid:
@@ -27,13 +29,25 @@ class Bid:
                                       deadline=libs.Functions.deadline(sublistET[ps]),
                                       separation=ps,
                                       assigned_events=(sublistET[ps]),
-                                      budget = libs.Functions.get_polling_task_budget(sublistET[ps])
+                                      budget=libs.Functions.get_polling_task_budget(sublistET[ps])
                                       )
             PT.append(testTask)
         self.PT = PT
 
 #    def __repr__(self):
 #        pass
+    def __repr__(self):
+        return_string = f'Bid - hash: {self.__hash__()}\n'
+        return_string += f'TT Tasks: {self.TT}\n'
+        return_string += f'PT Tasks: {self.PT}'
+        return return_string
+
+    def brief(self):
+        return_string = f'Bid - hash: {self.__hash__()}\n'
+        return_string += f'TT Tasks: {len(self.TT)}\n'
+        return_string += f'PT Tasks: {len(self.PT)}'
+        return return_string
+
 
     def showTT(self, verbose=False):
         if (self.verbosity > 3 or verbose):
@@ -51,6 +65,48 @@ class Bid:
         self.showTT(verbose)
         self.showPT(verbose)
 
+    def move_et(self):
+        zeros_list = []
+        if self.verbosity > 5: print(f'Number of Polling Servers{len(self.PT)}')
+        ps_count = 0
+        for ps in self.PT:
+            et_count = 0
+            for et in ps.assignedEvents:
+                # print(f'PT: {et.name}, {et.separation}')
+                if et.separation == 0:
+                    zeros_list.append({'task': et_count, 'ps': ps_count})
+                et_count += 1
+            ps_count += 1
+        if self.verbosity > 5: print(f'{zeros_list}\n')
+        if len(zeros_list) == 0:
+            return False
+
+        choice = random.choice(zeros_list)
+        source_ps = choice.get("ps")
+        source_task = choice.get("task")
+        if self.verbosity > 5:
+            print(f'RANDOM = {choice}')
+            print(f'RANDOM = {choice.get("ps")}')
+            print(f'{self.PT[choice.get("ps")].assignedEvents[choice.get("task")]}')
+        et_task = self.PT[choice.get("ps")].assignedEvents.pop(source_task)
+        destination_ps = random.randint(0, ps_count - 1)
+        # Avoid Moving Back
+        watchdog_int = 0
+        while destination_ps == source_ps:
+            destination_ps = random.randint(0, ps_count - 1)
+            watchdog_int += 1
+            if watchdog_int > 10:
+                return False
+
+        if self.verbosity > 3 or True:
+            print(f'ET Task{et_task.name} moved from {source_ps} to {destination_ps}')
+        if self.verbosity > 5:
+            print(f'{destination_ps}')
+            print(f'{destination_ps}{self.PT[destination_ps].assignedEvents}')
+        self.PT[destination_ps].assignedEvents.append(et_task)
+
+        return True
+
     def get_neighbour(self, variation=3):
         """
         move Zero Task to another Polling server
@@ -59,47 +115,13 @@ class Bid:
         """
         neighbour = copy.deepcopy(self)
         for var in range(variation):
-            zeros_list = []
-            if neighbour.verbosity > 5: print(f'Number of Polling Servers{len(neighbour.PT)}')
-            ps_count = 0
-            for ps in neighbour.PT:
-                et_count = 0
-                for et in ps.assignedEvents:
-                    # print(f'PT: {et.name}, {et.separation}')
-                    if et.separation == 0:
-                        zeros_list.append({'task': et_count, 'ps': ps_count})
-                    et_count += 1
-                ps_count += 1
-            if neighbour.verbosity > 5: print(f'{zeros_list}\n')
-            if len(zeros_list)==0:
-                return neighbour
-            if ps_count<=1:
-                return neighbour
-
-            choice = random.choice(zeros_list)
-            source_ps = choice.get("ps")
-            source_task = choice.get("task")
-            if neighbour.verbosity > 5:
-                print(f'RANDOM = {choice}')
-                print(f'RANDOM = {choice.get("ps")}')
-                print(f'{neighbour.PT[choice.get("ps")].assignedEvents[choice.get("task")]}')
-            et_task = neighbour.PT[choice.get("ps")].assignedEvents.pop(source_task)
-            destination_ps = random.randint(0, ps_count - 1)
-            # Avoid Moving Back
-            while destination_ps == source_ps:
-                destination_ps = random.randint(0, ps_count - 1)
-            if neighbour.verbosity > 5:
-                print(f'{destination_ps}')
-                print(f'{destination_ps}{neighbour.PT[destination_ps].assignedEvents}')
-            neighbour.PT[destination_ps].assignedEvents.append(et_task)
-            if neighbour.verbosity > 3:
-                print(f'ET Task{et_task.name} moved from {choice.get("ps")} to {destination_ps}')
-
-        # Update Deadline for PT based on new ET Tasks
-        for pt in neighbour.PT:
-            pt.deadline = libs.Functions.deadline(pt.assignedEvents)
-            pt.computation = libs.Functions.computation(pt.assignedEvents)
-            pt.period = libs.Functions.lcm(pt.assignedEvents)
+            is_moved = neighbour.move_et()
+            # Update Deadline for PT based on new ET Tasks
+            if is_moved:
+                for pt in neighbour.PT:
+                    pt.deadline = libs.Functions.deadline(pt.assignedEvents)
+                    pt.computation = libs.Functions.computation(pt.assignedEvents)
+                    pt.period = libs.Functions.lcm(pt.assignedEvents)
         return neighbour
 
     def get_neighbour_swap(self, swaps=3):
@@ -123,13 +145,16 @@ class Bid:
                     et_count += 1
                 ps_count += 1
             if neighbour.verbosity > 5: print(f'{zeros_list}\n')
-            if ps_count<=1:
+            if len(zeros_list) == 0:
                 return neighbour
             choice = random.choice(zeros_list)
             choice2 = random.choice(zeros_list)
-            while choice == choice2 or choice.get("ps") == choice2.get("ps"):
+            watchdog_int=0
+            while (choice == choice2 or choice.get("ps") == choice2.get("ps")):
                 choice2 = random.choice(zeros_list)
-
+                watchdog_int += 1
+                if watchdog_int > 10:
+                    return neighbour
             source_ps = choice.get("ps")
             source_ps2 = choice2.get("ps")
             source_task = choice.get("task")

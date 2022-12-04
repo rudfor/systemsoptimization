@@ -43,10 +43,27 @@ if __name__ == '__main__':
     print(f'intial BID:')
     #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
     #libs.Solution.schedule(initial_bid,4)
-    libs.Debug_Output.rudolf_test(initial_bid, args.plot)
-    print(f'Debug OUtput:')
+    #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
+    #print(f'Debug OUtput:')
 
     # print(f'{testTask}')
+    initial_solution = libs.Solution.schedule_bid(initial_bid)
+    initial_bid.showPT()
+    print(f'initial solution: {initial_solution}')
+    # Itterate 20 times
+    current_bid = initial_bid
+    for a in range(6):
+        next_bid = current_bid.get_neighbour()
+        next_bid_solution = libs.Solution.schedule_bid(next_bid)
+        print(f'initial solution: {next_bid_solution}')
+        current_bid = next_bid
+
+    print(f'initial solution: {next_bid_solution}')
+    next_bid.showPT()
+
+    # Foreach bid:
+
+    #libs.Debug_Output.ruft_debug(initial_bid, args.plot)
 
     # START SEARCHING OF A SCHEDULE
     #solution = libs.Solution.search_solution2(csv)

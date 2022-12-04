@@ -1,8 +1,10 @@
 import copy
 import sys
-
+import deprecation
 import libraries as libs
 
+
+@deprecation.deprecated(details="Use SolutionModelBid instead")
 class SolutionModel:
     def __init__(self, schedule, cost, schedulable = False, config = None):
         self.schedule = schedule
@@ -10,15 +12,58 @@ class SolutionModel:
         self.schedulable = schedulable
         self.config = config
 
+
+class SolutionModelBid:
+    """
+    Updated Solution model based on Bid
+    """
+    def __init__(self, schedule, costTT, costET, schedulable=False, bid=None, verbosity=0):
+        self.schedule = schedule
+        self.costTT = costTT
+        self.costET = costET
+        self.schedulable = schedulable
+        self.bid = bid
+        self.verbosity = verbosity
+
+    def __repr__(self):
+        return_string = f'SolutionModel: '
+        if self.verbosity > 3: return_string += f'Schedule({self.schedule}) '
+        return_string += f'Schedulable({self.schedulable})\n'
+        return_string += f'CostTT({self.costTT})\n'
+        return_string += f'CostET({self.costET})\n'
+        if self.bid == None:
+            return_string += f'Bid(None)'
+        else:
+            return_string += f'Bid: ({self.bid.brief()})'
+        return return_string
+
+
 class ConfigModel:
     def __init__(self, TT, ET, PT):
         self.TT = TT
         self.ET = ET
         self.PT = PT
 
+
 class Solution:
     @staticmethod
-    def schedule(config, verbosity=0):
+    def schedule_bid(bid, verbosity=0):
+
+        PT_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(bid.PT)
+
+        # Get schedule table and worst-case response times
+        TT_and_PT = bid.TT + bid.PT
+        schedule, TT_WCRT, TT_schedulable = libs.AlgoOne.scheduling_TT(copy.deepcopy(TT_and_PT))
+        # print(TT_WCRT)
+        TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
+
+        # Get solution cost
+        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT, 6)
+
+        return SolutionModelBid(schedule, TT_WCRT, ET_WCRT, TT_schedulable and PT_schedulable, bid)
+
+    @deprecation.deprecated(details="Use schedulebid instead")
+    def schedule(config):
         TT = config.TT
         PT = config.PT
 
