@@ -61,12 +61,16 @@ class AlgoOne:
                 # Check time has not passed task deadline
                 if T.computation > 0 and T.deadline <= t:
                     libs.Debug_Output.message(f"\n Deadline Missed", t, T)
-                    return FAIL_SCHEDULE, FAIL_WCRT, False
+                    if return_df:
+                        return FAIL_SCHEDULE, FAIL_WCRT, pd.DataFrame, False
+                    else:
+                        return FAIL_SCHEDULE, FAIL_WCRT, False
 
                 # When task is completed we should reset its duration and move deadline to the present
                 if t % T.period == 0:
                     T.r = t
-                    T.computation = T.init_computation
+                    # T.computation = T.init_computation
+                    T.reset_compute()
                     T.deadline = T.init_deadline + t
                     # print('\n reset on period', T.name, T.computation, T.init_deadline, T.deadline, t)
 
@@ -90,7 +94,8 @@ class AlgoOne:
 
                 # Since we execute the task in the current second then we
                 # reduce by one time second the remaining duration of the task
-                ti.computation -= 1
+                #ti.computation -= 1
+                ti.compute()
 
                 # this is the 3rd time i move the code down here
                 # Check time is behind task deadline
@@ -108,20 +113,25 @@ class AlgoOne:
                 break
             watchDog -= 1
 
-        # If at least one task has its duration more than 0 that indicates
-        # that at least one task is not completed and therefore the schedule
-        # is infeasible for the given combination of tasks in the given time limit.
-        if any(task.computation > 0 for task in TT):
-            # for T in TT:
-                # libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
-            return FAIL_SCHEDULE, FAIL_WCRT, False
-
+        # Prep Data Frame
         with open("output/output.csv", "w") as file:
             file.write(csv_header + '\n')
             for csv_line in csv_content:
                 file.writelines(csv_line + '\n')
 
         df = pd.read_csv('output/output.csv')
+
+        # If at least one task has its duration more than 0 that indicates
+        # that at least one task is not completed and therefore the schedule
+        # is infeasible for the given combination of tasks in the given time limit.
+        if any(task.computation > 0 for task in TT):
+            # for T in TT:
+                # libs.Debug_Output.message(f"\n Schedule is infeasible if any TT task has ci > 0 at this point", t, T)
+            if return_df:
+                return FAIL_SCHEDULE, FAIL_WCRT, df, False
+            else:
+                return FAIL_SCHEDULE, FAIL_WCRT, False
+
         if visuals:
             df.plot()
             plt.show()

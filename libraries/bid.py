@@ -4,7 +4,6 @@ import libraries as libs
 import random
 
 
-
 class Bid:
     """
     Class Bid
@@ -22,18 +21,19 @@ class Bid:
             # Create a new Polling Task Server using a group of ET tasks
             testTask = libs.TaskModel(name=f'PT{ps}',
                                       computation=libs.Functions.computation(sublistET[ps]),
-                                      period=libs.Functions.lcm(sublistET[ps]),
+                                      period=libs.Functions.lcm(TT),
                                       priority=7,
                                       type='PT',
                                       deadline=libs.Functions.deadline(sublistET[ps]),
                                       separation=ps,
-                                      assigned_events=(sublistET[ps])
+                                      assigned_events=(sublistET[ps]),
+                                      budget = libs.Functions.get_polling_task_budget(sublistET[ps])
                                       )
             PT.append(testTask)
         self.PT = PT
 
-    def __repr__(self):
-        pass
+#    def __repr__(self):
+#        pass
 
     def showTT(self, verbose=False):
         if (self.verbosity > 3 or verbose):
@@ -46,7 +46,6 @@ class Bid:
             for t in self.PT:
                 print(f'{t}')
                 if (self.verbosity > 4 or verbose): print(f'Task Hash : {t.__hash__()}')
-
 
     def show(self, verbose=False):
         self.showTT(verbose)
@@ -73,6 +72,8 @@ class Bid:
                 ps_count += 1
             if neighbour.verbosity > 5: print(f'{zeros_list}\n')
             if len(zeros_list)==0:
+                return neighbour
+            if ps_count<=1:
                 return neighbour
 
             choice = random.choice(zeros_list)
@@ -122,6 +123,8 @@ class Bid:
                     et_count += 1
                 ps_count += 1
             if neighbour.verbosity > 5: print(f'{zeros_list}\n')
+            if ps_count<=1:
+                return neighbour
             choice = random.choice(zeros_list)
             choice2 = random.choice(zeros_list)
             while choice == choice2 or choice.get("ps") == choice2.get("ps"):
@@ -151,6 +154,7 @@ class Bid:
         for pt in neighbour.PT:
             pt.deadline = libs.Functions.deadline(pt.assignedEvents)
             pt.computation = libs.Functions.computation(pt.assignedEvents)
+            pt.period = libs.Functions.lcm(pt.assignedEvents)
         return neighbour
 
 

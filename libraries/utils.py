@@ -2,6 +2,10 @@ import sys
 
 import numpy as np
 import random
+import libraries as libs
+import pandas as pd
+import matplotlib.pyplot as plt
+
 
 class Functions():
     @staticmethod
@@ -22,12 +26,14 @@ class Functions():
     def computation(tasks, verbose=False):
         compute = [task.computation for task in tasks]
         if verbose:
-            print(f'{compute}')
+            print(f'COMPUTE: {compute}')
         return sum(compute)
 
     @staticmethod
     def deadline(tasks, verbose=False):
-        deadline = [task.deadline for task in tasks]
+        # deadline_list = []
+        deadline = [task.deadline for task in tasks if task.computation!=0]
+
         if verbose:
             print(f'{deadline}')
         return min(deadline)
@@ -108,8 +114,18 @@ class Functions():
         return int(next_budget)
 
     @staticmethod
-    def cost_function(TT_WCRT, ET_WCRT):
+    def cost_function(tt_wcrt, et_wcrt, verbosity=0):
+        if not isinstance(tt_wcrt, list):
+            TT_WCRT = [tt_wcrt]
+        else:
+            TT_WCRT = tt_wcrt
+        if not isinstance(et_wcrt, list):
+            ET_WCRT = [et_wcrt]
+        else:
+            ET_WCRT = et_wcrt
         ALL_WCRT = TT_WCRT + ET_WCRT
+        if verbosity > 5:
+            print(f'DEBUG ALL_WCRT: {ALL_WCRT}, TT_WCRT: {TT_WCRT}, ET_WCRT: {ET_WCRT}')
         return round(sum(ALL_WCRT)/len(ALL_WCRT))
 
     @staticmethod
@@ -216,3 +232,57 @@ class Debug_Output:
         print(f"\n {message}"
               f"cost: {solution.cost} "
               f"schedulable: {solution.schedulable}")
+
+    @staticmethod
+    def rudolf_test(initial_bid, plot=False):
+        initial_bid.showPT()
+        print(f'RF_TEST: ONE')
+        bid2 = initial_bid.get_neighbour(3)
+        bid2.showPT()
+        print(f'RF_TEST: TWO')
+        bid3 = initial_bid.get_neighbour_swap(3)
+        bid3.showPT()
+        print(f'RF_TEST: Three')
+
+        # solution = libs.Bid.search_solution(csv, args.seed, args.plot, args.verbosity)
+        # Divide ET into Polling servers zeros are randomly placed
+
+        schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(initial_bid.TT + initial_bid.PT,
+                                                                                   visuals=False, return_df=True)
+        schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(bid2.TT + bid2.PT, visuals=False,
+                                                                                   return_df=True)
+        schedule3, wcrt3, data_frame3, isSchedulable3 = libs.AlgoOne.scheduling_TT(bid2.TT + bid3.PT, visuals=False,
+                                                                                   return_df=True)
+
+        libs.AlgoOne.scheduling_TT(initial_bid.TT, initial_bid.PT)
+
+        if plot:
+            fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, 1)
+            fig.suptitle('Horizontally stacked subplots')
+            # data_frame1_diff = data_frame1.diff()
+            data_frame1.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+            # ax1.set_yscale('log')
+            plt.legend(ncol=1)
+
+            df_1_2 = data_frame1.compare(data_frame2)
+            df_1_2.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+            plt.legend(ncol=1)
+
+            # data_frame2_diff = data_frame2.diff()
+            data_frame2.plot(ax=ax3, label='auto label', title='Polling Server ET Tasks')
+            # ax2.set_yscale('log')
+            plt.legend(ncol=1)
+
+            df_2_3 = data_frame2.compare(data_frame3)
+            df_2_3.plot(ax=ax4, label='auto label', title='Polling Server ET Tasks')
+            plt.legend(ncol=1)
+
+            data_frame3.plot(ax=ax5, label='auto label', title='Time Triggered and Polling Server')
+            # ax3.set_yscale('log')
+            plt.legend(ncol=1)
+            plt.show()
+            # fig, (ax1, ax2) = plt.subplots(1, 2)
+
+        print(f'wcrt: {wcrt1}, schedulable={isSchedulable1}')
+        print(f'wcrt: {wcrt2}, schedulable={isSchedulable2}')
+        print(f'wcrt: {wcrt3}, schedulable={isSchedulable3}')

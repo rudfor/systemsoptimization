@@ -1,4 +1,6 @@
 # This is a sample Python script.
+import libraries as libs
+from operator import attrgetter
 
 class TaskModel:
     """
@@ -12,7 +14,7 @@ class TaskModel:
     while for ET tasks, where we assume a sporadic model,
     it describes the minimal inter-arrival distance (MIT)
     """
-    def __init__(self, name, computation, period, type, priority, deadline, separation=0, assigned_events=None):
+    def __init__(self, name, computation, period, type, priority, deadline, budget=0, separation=0, assigned_events=None):
         self.name = name
         self.computation = int(computation) # ci computation
         self.init_computation = int(computation) # Ci initial computation
@@ -22,10 +24,40 @@ class TaskModel:
         self.deadline = int(deadline) # d
         self.init_deadline = int(deadline) # D
         self.separation = int(separation)
+        self.budget = int(budget)
         self.assignedEvents = assigned_events
+        self.budget = period
 
         self.r = 0 # worst-case response time
         self.wcrt = 0
+
+    def compute(self, verbosity = 0):
+        if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
+        if self.assignedEvents is not None:
+            if libs.Functions.computation(self.assignedEvents) > 0:
+                if verbosity > 3: print(f'BEFORE: {self.computation}-{self.assignedEvents}\n')
+                edf_task = min([task for task in self.assignedEvents if task.computation!=0], key=attrgetter('deadline'))
+                edf_task.computation -= 1
+                if verbosity > 3: print(f'EDF_TASK: {edf_task}\n')
+                if verbosity > 3: print(f'calculate Computation: {libs.Functions.computation(self.assignedEvents)}\n')
+                self.compusation = libs.Functions.computation(self.assignedEvents)
+                deadline_list = [task.deadline for task in self.assignedEvents if task.computation != 0]
+                if not deadline_list:
+                    pass
+                else:
+                    deadline = min(deadline_list)
+                    self.deadline = deadline
+                if verbosity > 3: print(f'AFTER: {self.computation}-{self.assignedEvents}\n')
+        else:
+            self.computation -= 1
+
+    def reset_compute(self, verbosity = 0):
+        if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
+        if self.assignedEvents is not None:
+            if libs.Functions.computation(self.assignedEvents) > 0:
+                pass
+        else:
+            self.computation = self.init_computation
 
     def __repr__(self):
         if self.assignedEvents is None:

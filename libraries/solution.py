@@ -18,24 +18,26 @@ class ConfigModel:
 
 class Solution:
     @staticmethod
-    def schedule(config):
+    def schedule(config, verbosity=0):
         TT = config.TT
         PT = config.PT
 
         PT_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(copy.deepcopy(PT))
-
+        if verbosity > 3:
+            print(f'PT {PT},\n ET_WCRT {ET_WCRT}')
         # Add time triggered polling tasks, if any
         # TT_PT, ET_WCRT, PT_created = libs.PollingServer.add_PT(copy.deepcopy(TT), copy.deepcopy(ET))
         # print(f'\n TT_PT: {TT_PT}', '\n event_triggered_tasks: {ET}')
 
         # Get schedule table and worst-case response times
         TT_and_PT = TT + PT
+        #print(f'BOTH{TT_and_PT} only TT{TT} only PT{PT}')
         schedule, TT_WCRT, TT_schedulable = libs.AlgoOne.scheduling_TT(copy.deepcopy(TT_and_PT))
         # print(TT_WCRT)
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
-        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT)
+        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT,6)
 
         return SolutionModel(schedule, cost, TT_schedulable and PT_schedulable, config)
 
