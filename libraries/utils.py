@@ -18,7 +18,7 @@ class Functions():
         return task
 
     @staticmethod
-    def lcm(tasks):
+    def lcm(tasks, verbosity=0):
         periods = [task.period for task in tasks]
         return np.lcm.reduce(periods)
 
@@ -30,13 +30,15 @@ class Functions():
         return sum(compute)
 
     @staticmethod
-    def deadline(tasks, verbose=False):
+    def deadline(tasks, verbosity=0):
         # deadline_list = []
         deadline = [task.deadline for task in tasks if task.computation!=0]
-
-        if verbose:
+        if verbosity > 7:
             print(f'{deadline}')
-        return min(deadline)
+        if len(deadline)==0:
+            return 0
+        else:
+            return min(deadline)
 
 
     @staticmethod
@@ -125,7 +127,7 @@ class Functions():
             ET_WCRT = et_wcrt
         ALL_WCRT = TT_WCRT + ET_WCRT
         if verbosity > 5:
-            print(f'DEBUG ALL_WCRT: {ALL_WCRT}, TT_WCRT: {TT_WCRT}, ET_WCRT: {ET_WCRT}')
+            print(f'DEBUG ALL_WCRT: {ALL_WCRT}\nTT_WCRT: {TT_WCRT}\nET_WCRT: {ET_WCRT}')
         return round(sum(ALL_WCRT)/len(ALL_WCRT))
 
     @staticmethod

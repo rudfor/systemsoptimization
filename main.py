@@ -2,6 +2,7 @@
 import libraries as libs
 import os
 import sys
+import copy
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -51,17 +52,30 @@ if __name__ == '__main__':
     initial_bid.showPT()
     print(f'initial solution: {initial_solution}')
     # Itterate 20 times
-    current_bid = initial_bid
+    current_bid = copy.deepcopy(initial_bid)
+
+    schedule0, wcrt0, data_frame0, isSchedulable0 = libs.AlgoOne.scheduling_TT(initial_bid.TT + initial_bid.PT, visuals=False,
+                                                                               return_df=True)
+
     for a in range(20):
-        next_bid = current_bid.get_neighbour(5)
+        next_bid = copy.deepcopy(current_bid.get_neighbour(5))
         next_bid_solution = libs.Solution.schedule_bid(next_bid)
         print(f'initial solution: {next_bid_solution}')
         current_bid = next_bid
-        schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False, return_df=True)
-        data_frame1.plot(label='auto label', title='Time Triggered Tasks')
 
+    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(current_bid.TT + next_bid.PT, visuals=False,
+                                                                               return_df=True)
+    schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False,
+                                                                               return_df=True)
+    data_frame0.plot(label='auto label', title='TT and PT Tasks')
+    data_frame1.plot(label='auto label', title='TT and PT Tasks')
     print(f'initial solution: {next_bid_solution}')
-    next_bid.showPT()
+    print(f'INITIAL')
+    initial_bid.showPT(4)
+    print(f'CURRENT')
+    current_bid.showPT(4)
+    print(f'NEXT')
+    next_bid.showPT(4)
 
     #schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False, return_df=True)
     #data_frame1.plot(label='auto label', title='Time Triggered Tasks')

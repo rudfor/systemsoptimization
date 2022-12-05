@@ -116,6 +116,10 @@ class Bid:
         # source and destination Polling server will be different
         """
         neighbour = copy.deepcopy(self)
+        for tt in neighbour.TT:
+            tt.reset_compute()
+        for pt in neighbour.PT:
+            pt.reset_compute()
         for var in range(variation):
             is_moved = neighbour.move_et()
             # Update Deadline for PT based on new ET Tasks
@@ -212,7 +216,8 @@ class Bid:
                                       type='PT',
                                       deadline=libs.Functions.deadline(sublistET[ps]),
                                       separation=ps,
-                                      assigned_events=(sublistET[ps])
+                                      assigned_events=(sublistET[ps]),
+                                      budget=libs.Functions.get_polling_task_budget(sublistET[ps]) * 2
                                       )
             PT.append(testTask)
 

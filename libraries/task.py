@@ -1,6 +1,7 @@
 # This is a sample Python script.
 import libraries as libs
 from operator import attrgetter
+import deprecation
 
 class TaskModel:
     """
@@ -14,7 +15,7 @@ class TaskModel:
     while for ET tasks, where we assume a sporadic model,
     it describes the minimal inter-arrival distance (MIT)
     """
-    def __init__(self, name, computation, period, type, priority, deadline, budget=None, separation=0, assigned_events=None):
+    def __init__(self, name, computation, period, type, priority, deadline, separation=0, assigned_events=None, budget=None):
         self.name = name
         self.computation = int(computation) # ci computation
         self.init_computation = int(computation) # Ci initial computation
@@ -58,7 +59,8 @@ class TaskModel:
         if self.assignedEvents is not None:
             if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
             if libs.Functions.computation(self.assignedEvents) > 0:
-                pass
+                for task in self.assignedEvents:
+                    task.reset_compute()
         else:
             self.computation = self.init_computation
 
@@ -90,6 +92,8 @@ class TaskModel:
 def get_idle():
     return TaskModel('idle', -1, -1, 'Idle', -1, -1)
 
+
+@deprecation.deprecated(details="Use SolutionModelBid instead")
 def get_polling(separation, budget, period, assignedEvents):
     # deadline = period based on 3rd pdf hint
     # priority can be 7 since polling tasks are time triggered tasks

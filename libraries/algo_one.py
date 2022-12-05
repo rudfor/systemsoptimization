@@ -95,7 +95,7 @@ class AlgoOne:
                 # Since we execute the task in the current second then we
                 # reduce by one time second the remaining duration of the task
                 #ti.computation -= 1
-                verbosity = 5
+                verbosity = 0
                 ti.compute(verbosity)
                 if verbosity > 3: print(f'AFTER: {ti.computation}-{ti.deadline}\n')
 

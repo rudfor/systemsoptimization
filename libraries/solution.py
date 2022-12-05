@@ -49,7 +49,16 @@ class Solution:
     @staticmethod
     def schedule_bid(bid, verbosity=0):
 
-        PT_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(bid.PT)
+        # PT_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(bid.PT)
+        ET_WCRT = []
+        PT_schedulable = True
+        for PT in bid.PT:
+            pt_is_schedulable, et_wcrt = libs.AlgoTwoBid.scheduling_ET(PT)
+            if PT_schedulable and pt_is_schedulable:
+                PT_schedulable = True
+            else:
+                PT_schedulable = False
+            ET_WCRT += et_wcrt
 
         # Get schedule table and worst-case response times
         TT_and_PT = bid.TT + bid.PT
@@ -63,7 +72,8 @@ class Solution:
         return SolutionModelBid(schedule, TT_WCRT, ET_WCRT, TT_schedulable and PT_schedulable, bid)
 
     @deprecation.deprecated(details="Use schedulebid instead")
-    def schedule(config):
+    @staticmethod
+    def schedule(config, verbosity=0):
         TT = config.TT
         PT = config.PT
 
@@ -102,6 +112,7 @@ class Solution:
         return best_solution
 
 
+    @deprecation.deprecated(details="Use search_solution_bid instead")
     @staticmethod
     def search_solution(csv):
         TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
@@ -141,7 +152,7 @@ class Solution:
         return final_solution, solutions
 
     @staticmethod
-    def search_solution2(csv):
+    def search_solution_bid(csv):
         TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
 
         # GET INITIAL SOLUTION
@@ -178,6 +189,7 @@ class Solution:
         return final_solution, solutions
 
 
+    @deprecation.deprecated(details="Use SolutionModelBid instead")
     @staticmethod
     def get_init_solution(TT, ET):
         # Distribute events
