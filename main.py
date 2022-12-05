@@ -52,18 +52,19 @@ if __name__ == '__main__':
     print(f'initial solution: {initial_solution}')
     # Itterate 20 times
     current_bid = initial_bid
-    for a in range(6):
+    for a in range(20):
         next_bid = current_bid.get_neighbour(5)
         next_bid_solution = libs.Solution.schedule_bid(next_bid)
         print(f'initial solution: {next_bid_solution}')
         current_bid = next_bid
+        schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False, return_df=True)
+        data_frame1.plot(label='auto label', title='Time Triggered Tasks')
 
     print(f'initial solution: {next_bid_solution}')
     next_bid.showPT()
 
-    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT,
-                                                                               visuals=False, return_df=True)
-    data_frame1.plot(label='auto label', title='Time Triggered Tasks')
+    #schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False, return_df=True)
+    #data_frame1.plot(label='auto label', title='Time Triggered Tasks')
     plt.show()
     # Foreach bid:
 

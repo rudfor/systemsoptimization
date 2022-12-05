@@ -183,6 +183,7 @@ class Bid:
             pt.deadline = libs.Functions.deadline(pt.assignedEvents)
             pt.computation = libs.Functions.computation(pt.assignedEvents)
             pt.period = libs.Functions.lcm(pt.assignedEvents)
+            pt.budget = libs.Functions.get_polling_task_budget(pt.assignedEvents) * 2
         return neighbour
 
 
