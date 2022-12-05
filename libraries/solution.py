@@ -48,8 +48,6 @@ class ConfigModel:
 class Solution:
     @staticmethod
     def schedule_bid(bid, verbosity=0):
-
-        # PT_schedulable, ET_WCRT = libs.PollingServer.check_polling_tasks_schedulability(bid.PT)
         ET_WCRT = []
         PT_schedulable = True
         for PT in bid.PT:
@@ -58,7 +56,10 @@ class Solution:
                 PT_schedulable = True
             else:
                 PT_schedulable = False
-            ET_WCRT += et_wcrt
+            if not pt_is_schedulable:
+                ET_WCRT += et_wcrt*2
+            else:
+                ET_WCRT += et_wcrt
 
         # Get schedule table and worst-case response times
         TT_and_PT = bid.TT + bid.PT
