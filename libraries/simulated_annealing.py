@@ -67,3 +67,42 @@ def simulated_annealing(initial_solution):
 
     # SA FINAL SOLUTION
     return solution
+
+# Peforms simulated annealing to find a solution
+def simulated_annealing_bid(initial_solution):
+    initial_temp = 50
+    final_temp = 1
+    cooling_rate = 1
+
+    current_temp = initial_temp
+
+    # SET CURRENT WITH INITIAL SOLUTION
+    # Start by initializing the current solution with the initial solution
+    current_solution = initial_solution
+    solution = current_solution
+
+    while current_temp > final_temp:
+        # FIND NEIGHBOR SOLUTION
+        proposed_solution = neighbor(current_solution)
+
+        # Check if possible is better
+        cost_diff = current_solution.cost - proposed_solution.cost
+
+        # if the new solution is better, accept it
+        if cost_diff > 0:
+            solution = proposed_solution
+
+        # if the proposed solution is not better, accept it with a probability of e^(-cost/temp)
+        else:
+            try:
+                exp = np.exp(-cost_diff / current_temp)
+            except:
+                print('error calculating exp', '-cost_diff', cost_diff, 'current_temp', current_temp)
+            if random.uniform(0, 1) < exp:
+                solution = proposed_solution
+
+        # cool the temperature
+        current_temp -= cooling_rate
+
+    # SA FINAL SOLUTION
+    return solution

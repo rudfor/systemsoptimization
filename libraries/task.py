@@ -30,7 +30,6 @@ class TaskModel:
         else:
             self.budget = period
         self.assignedEvents = assigned_events
-        self.budget=budget
 
         self.r = 0 # worst-case response time
         self.wcrt = 0
@@ -60,15 +59,19 @@ class TaskModel:
             if verbosity > 3: print(f'PREQUEL: -{self.assignedEvents}\n')
             if libs.Functions.computation(self.assignedEvents) > 0:
                 for task in self.assignedEvents:
+                    #print(f'#2 Compute RESET')
                     task.reset_compute()
+                self.computation = libs.Functions.computation(self.assignedEvents)
         else:
             self.computation = self.init_computation
+            #print(f'#1 Compute RESET')
 
     def __repr__(self):
         if self.assignedEvents is None:
             return_string = f'Task: '
             return_string += f'name({self.name}) '
             return_string += f'computation({self.computation}) '
+            return_string += f'init_computation({self.init_computation}) '
             return_string += f'period({self.period}) '
             return_string += f"type({self.type}) "
             return_string += f"deadline({self.deadline}) "

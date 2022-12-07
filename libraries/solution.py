@@ -56,15 +56,15 @@ class Solution:
                 PT_schedulable = True
             else:
                 PT_schedulable = False
+            if verbosity > 4: print(f'ET_WCRT: {ET_WCRT}, et_wcrt: {et_wcrt} is Schedulable {pt_is_schedulable}')
             if not pt_is_schedulable:
-                ET_WCRT += et_wcrt*2
+                ET_WCRT.append(et_wcrt*2)
             else:
                 ET_WCRT += et_wcrt
+            PT.reset_compute()
 
         # Get schedule table and worst-case response times
-        TT_and_PT = bid.TT + bid.PT
-        schedule, TT_WCRT, TT_schedulable = libs.AlgoOne.scheduling_TT(copy.deepcopy(TT_and_PT))
-        # print(TT_WCRT)
+        schedule, TT_WCRT, TT_schedulable = libs.AlgoOne.scheduling_TT_Bid(bid)
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
@@ -153,13 +153,8 @@ class Solution:
         return final_solution, solutions
 
     @staticmethod
-    def search_solution_bid(csv):
-        TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
-
-        # GET INITIAL SOLUTION
-        # It will be used to start the optimization of simulated annealing later
-        initial_solution = Solution.get_init_solution(TT, ET)
-        libs.Debug_Output.show_solution('Initial solution for TTs and TPs with ', initial_solution)
+    def search_solution_bid(bid):
+        #TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
 
         solutions = []
         # TODO: All this can also be removed and just increase the SA initial temperature
@@ -169,7 +164,7 @@ class Solution:
             print('Accepted solutions found so far: ', len(solutions))
 
             # TRIGGER SA
-            proposed_solution = libs.simulated_annealing(initial_solution)
+            proposed_solution = libs.simulated_annealing_bid(bid)
             libs.Debug_Output.show_solution('SA proposed solution for TTs and TPs with ', proposed_solution)
 
             # Validate solution is schedulable

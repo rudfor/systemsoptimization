@@ -235,6 +235,33 @@ class Debug_Output:
               f"cost: {solution.cost} "
               f"schedulable: {solution.schedulable}")
 
+
+    @staticmethod
+    def plot_bid(bid, message, verbose = False):
+        print(f'{message} :: TT{bid.TT}\n PT{bid.PT}')
+        bid.showTT()
+        bid.showPT()
+        schedule0, wcrt0, data_frame0, isSchedulable0 = libs.AlgoOne.scheduling_TT(bid.TT,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(bid.PT,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(bid.TT + bid.PT,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        fig.suptitle('Horizontally stacked subplots')
+        data_frame0.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+        plt.legend(ncol=1)
+
+        data_frame1.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+        plt.legend(ncol=1)
+
+        data_frame2.plot(ax=ax3, label='auto label', title='Time Triggered and Polling Server')
+        plt.legend(ncol=2)
+
+
     @staticmethod
     def ruft_debug(initial_bid, plot):
         # Initial Condition

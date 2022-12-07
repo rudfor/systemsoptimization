@@ -34,8 +34,6 @@ class Bid:
             PT.append(testTask)
         self.PT = PT
 
-#    def __repr__(self):
-#        pass
     def __repr__(self):
         return_string = f'Bid - hash: {self.__hash__()}\n'
         return_string += f'TT Tasks: {self.TT}\n'
@@ -50,6 +48,11 @@ class Bid:
             return_string += f'  PT Tasks: {len(pt.assignedEvents)}'
         return return_string
 
+    def reset(self):
+        for tt in self.TT:
+            tt.reset_compute()
+        for pt in self.PT:
+            pt.reset_compute()
 
     def showTT(self, verbose=False):
         if (self.verbosity > 3 or verbose):
@@ -98,6 +101,7 @@ class Bid:
             destination_ps = random.randint(0, ps_count - 1)
             watchdog_int += 1
             if watchdog_int > 10:
+                self.PT[source_ps].assignedEvents.append(et_task)
                 return False
 
         if self.verbosity > 3 or True:
@@ -190,6 +194,27 @@ class Bid:
             pt.budget = libs.Functions.get_polling_task_budget(pt.assignedEvents) * 2
         return neighbour
 
+    def plot(self, message, verbose=False):
+        if verbose: print(f'{message}')
+        schedule0, wcrt0, data_frame0, isSchedulable0 = libs.AlgoOne.scheduling_TT(self.TT,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(self.PT,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT_Bid(self,
+                                                                                   visuals=False,
+                                                                                   return_df=True)
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        fig.suptitle(f'{message}')
+        data_frame0.plot(ax=ax1, label='auto label', title='Time Triggered Tasks')
+        plt.legend(ncol=3)
+
+        data_frame1.plot(ax=ax2, label='auto label', title='Polling Server ET Tasks')
+        plt.legend(ncol=1)
+
+        data_frame2.plot(ax=ax3, label='auto label', title='Time Triggered and Polling Server')
+        plt.legend(ncol=4)
 
 
     @staticmethod

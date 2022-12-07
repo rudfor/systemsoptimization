@@ -41,46 +41,24 @@ if __name__ == '__main__':
 
     # Initial Condition
     initial_bid = libs.Bid(csv, args.seed, args.verbosity)
-    print(f'intial BID:')
-    #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
-    #libs.Solution.schedule(initial_bid,4)
-    #libs.Debug_Output.rudolf_test(initial_bid, args.plot)
-    #print(f'Debug OUtput:')
+    #solution = libs.Solution.search_solution_bid(initial_bid)
 
-    # print(f'{testTask}')
-    initial_solution = libs.Solution.schedule_bid(initial_bid)
     initial_bid.showPT()
-    print(f'initial solution: {initial_solution}')
+    #print(f'initial solution: {initial_solution}')
     # Itterate 20 times
     current_bid = copy.deepcopy(initial_bid)
 
-    schedule0, wcrt0, data_frame0, isSchedulable0 = libs.AlgoOne.scheduling_TT(initial_bid.TT + initial_bid.PT, visuals=False,
-                                                                               return_df=True)
-
     for a in range(20):
-        next_bid = copy.deepcopy(current_bid.get_neighbour(5))
-        next_bid_solution = libs.Solution.schedule_bid(next_bid)
+        a = copy.deepcopy(current_bid.get_neighbour(5))
+        current_bid = copy.deepcopy(a)
+        next_bid_solution = libs.Solution.schedule_bid(a,5)
         print(f'initial solution: {next_bid_solution}')
-        current_bid = next_bid
 
-    schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(current_bid.TT + next_bid.PT, visuals=False,
-                                                                               return_df=True)
-    schedule2, wcrt2, data_frame2, isSchedulable2 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False,
-                                                                               return_df=True)
-    data_frame0.plot(label='auto label', title='TT and PT Tasks')
-    data_frame1.plot(label='auto label', title='TT and PT Tasks')
-    print(f'initial solution: {next_bid_solution}')
-    print(f'INITIAL')
-    initial_bid.showPT(4)
-    print(f'CURRENT')
-    current_bid.showPT(4)
-    print(f'NEXT')
-    next_bid.showPT(4)
+    initial_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
+    current_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")} [Neighbour]', True)
+    #next_bid.plot('NEXT', True)
 
-    #schedule1, wcrt1, data_frame1, isSchedulable1 = libs.AlgoOne.scheduling_TT(next_bid.TT + next_bid.PT, visuals=False, return_df=True)
-    #data_frame1.plot(label='auto label', title='Time Triggered Tasks')
     plt.show()
-    # Foreach bid:
 
     #libs.Debug_Output.ruft_debug(initial_bid, args.plot)
 
@@ -88,3 +66,6 @@ if __name__ == '__main__':
     #solution = libs.Solution.search_solution2(csv)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# RUN NOTES:
+# ./main.py --csv resources/testcases_orig2/inf_10_10/taskset__1643188013-a_0.1-b_0.1-n_30-m_20-d_unif-p_2000-q_4000-g_1000-t_5__20__tsk.csv --seed 299 --verbosity 2 -p
+

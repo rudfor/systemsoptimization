@@ -127,7 +127,8 @@ class AlgoTwoBid:
     # algorithm 2
     """
     @staticmethod
-    def scheduling_ET(PT:TaskModel):
+    def scheduling_ET(pt:TaskModel):
+        PT = copy.deepcopy(pt)
         Cp = PT.budget
         Tp = PT.period
         Dp = PT.deadline
