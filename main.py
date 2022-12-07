@@ -41,24 +41,26 @@ if __name__ == '__main__':
 
     # Initial Condition
     initial_bid = libs.Bid(csv, args.seed, args.verbosity)
-    #solution = libs.Solution.search_solution_bid(initial_bid)
+    solution, solutions = libs.Solution.search_solution_bid(initial_bid)
+    solution.bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
 
-    initial_bid.showPT()
+    #initial_bid.showPT()
     #print(f'initial solution: {initial_solution}')
     # Itterate 20 times
-    current_bid = copy.deepcopy(initial_bid)
+    if verbosity>9:
+        current_bid = copy.deepcopy(initial_bid)
 
-    for a in range(20):
-        a = copy.deepcopy(current_bid.get_neighbour(5))
-        current_bid = copy.deepcopy(a)
-        next_bid_solution = libs.Solution.schedule_bid(a,5)
-        print(f'initial solution: {next_bid_solution}')
+        for a in range(20):
+            a = copy.deepcopy(current_bid.get_neighbour(5))
+            current_bid = copy.deepcopy(a)
+            next_bid_solution = libs.Solution.schedule_bid(a,5)
+            print(f'initial solution: {next_bid_solution}')
 
-    initial_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
-    current_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")} [Neighbour]', True)
-    #next_bid.plot('NEXT', True)
+        initial_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
+        current_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")} [Neighbour]', True)
+        #next_bid.plot('NEXT', True)
 
-    plt.show()
+        plt.show()
 
     #libs.Debug_Output.ruft_debug(initial_bid, args.plot)
 

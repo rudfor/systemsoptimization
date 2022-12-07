@@ -3,6 +3,9 @@ import libraries as libs
 import random
 import numpy as np
 
+import libraries as libs
+from libraries.solution import SolutionModelBid
+
 def neighbor(solution):
     # Redistribute events
     events_grouped = libs.Functions.get_event_sublists(solution.config.ET)
@@ -27,6 +30,14 @@ def neighbor(solution):
 
     # return proposed solution
     return libs.Solution.schedule(solution.config)
+
+def neighbor_bid(solution:SolutionModelBid):
+    # Redistribute events
+    #events_grouped = libs.Functions.get_event_sublists(solution.config.ET)
+    neighbour = solution.bid.get_neighbour()
+
+    # return proposed solution
+    return libs.Solution.schedule_bid(neighbour)
 
 
 # Peforms simulated annealing to find a solution
@@ -83,7 +94,7 @@ def simulated_annealing_bid(initial_solution):
 
     while current_temp > final_temp:
         # FIND NEIGHBOR SOLUTION
-        proposed_solution = neighbor(current_solution)
+        proposed_solution = neighbor_bid(current_solution)
 
         # Check if possible is better
         cost_diff = current_solution.cost - proposed_solution.cost

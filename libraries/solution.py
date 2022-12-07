@@ -21,6 +21,7 @@ class SolutionModelBid:
         self.schedule = schedule
         self.costTT = costTT
         self.costET = costET
+        self.cost = libs.Functions.cost_function(costTT,costET)
         self.schedulable = schedulable
         self.bid = bid
         self.verbosity = verbosity
@@ -29,10 +30,11 @@ class SolutionModelBid:
         return_string = f'SolutionModel: '
         if self.verbosity > 3: return_string += f'Schedule({self.schedule}) '
         return_string += f'Schedulable({self.schedulable})\n'
-        return_string += f'CostTT({self.costTT})\n'
-        return_string += f'CostET({self.costET})\n'
+        return_string += f'Cost: ({self.cost})\n'
+        return_string += f'CostTT: ({self.costTT})\n'
+        return_string += f'CostET: ({self.costET})\n'
         if self.bid == None:
-            return_string += f'Bid(None)'
+            return_string += f'Bid: (None)'
         else:
             return_string += f'Bid: ({self.bid.brief()})'
         return return_string
@@ -68,7 +70,7 @@ class Solution:
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
-        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT, 6)
+        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT, verbosity)
 
         return SolutionModelBid(schedule, TT_WCRT, ET_WCRT, TT_schedulable and PT_schedulable, bid)
 
@@ -93,7 +95,7 @@ class Solution:
         TT_WCRT = TT_WCRT if TT_schedulable else TT_WCRT + [1000]
 
         # Get solution cost
-        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT,6)
+        cost = libs.Functions.cost_function(TT_WCRT, ET_WCRT, verbosity)
 
         return SolutionModel(schedule, cost, TT_schedulable and PT_schedulable, config)
 
@@ -155,6 +157,8 @@ class Solution:
     @staticmethod
     def search_solution_bid(bid):
         #TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
+        initial_solution = libs.Solution.schedule_bid(bid)
+        print(f'{initial_solution}')
 
         solutions = []
         # TODO: All this can also be removed and just increase the SA initial temperature
@@ -164,7 +168,7 @@ class Solution:
             print('Accepted solutions found so far: ', len(solutions))
 
             # TRIGGER SA
-            proposed_solution = libs.simulated_annealing_bid(bid)
+            proposed_solution = libs.simulated_annealing_bid(initial_solution)
             libs.Debug_Output.show_solution('SA proposed solution for TTs and TPs with ', proposed_solution)
 
             # Validate solution is schedulable
@@ -180,7 +184,7 @@ class Solution:
         # Chose solution based on the min cost
         final_solution = libs.Solution.select_best_solution(solutions)
 
-        libs.Functions.print_schedule(final_solution.schedule)
+        #libs.Functions.print_schedule(final_solution.schedule)
 
         return final_solution, solutions
 

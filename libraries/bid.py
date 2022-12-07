@@ -90,8 +90,7 @@ class Bid:
         source_ps = choice.get("ps")
         source_task = choice.get("task")
         if self.verbosity > 5:
-            print(f'RANDOM = {choice}')
-            print(f'RANDOM = {choice.get("ps")}')
+            print(f'Neighbour: choice: {choice}, source: {source_ps}')
             print(f'{self.PT[choice.get("ps")].assignedEvents[choice.get("task")]}')
         et_task = self.PT[choice.get("ps")].assignedEvents.pop(source_task)
         destination_ps = random.randint(0, ps_count - 1)
@@ -171,11 +170,9 @@ class Bid:
             source_task = choice.get("task")
             source_task2 = choice2.get("task")
             if neighbour.verbosity > 5:
-                print(f'RANDOM = {choice}')
-                print(f'RANDOM = {source_ps}')
+                print(f'Neighbour: choice: {choice}, source: {source_ps}')
                 print(f'{neighbour.PT[source_ps].assignedEvents[source_task]}')
-                print(f'RANDOM = {choice2}')
-                print(f'RANDOM = {source_ps2}')
+                print(f'Neighbour: choice2: {choice2}, source2: {source_ps2}')
                 print(f'{neighbour.PT[source_ps2].assignedEvents[source_task2]}')
             et_task = neighbour.PT[source_ps].assignedEvents.pop(source_task)
             et_task2 = neighbour.PT[source_ps2].assignedEvents.pop(source_task2)
