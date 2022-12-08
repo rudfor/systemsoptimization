@@ -255,7 +255,7 @@ class AlgoOne:
             watchDog -= 1
 
         # Prep Data Frame
-        with open("output/output.csv", "w") as file:
+        with open("output.csv", "w") as file:
             file.write(csv_header + '\n')
             for csv_line in csv_content:
                 file.writelines(csv_line + '\n')

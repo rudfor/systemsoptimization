@@ -48,7 +48,7 @@ if __name__ == '__main__':
     #initial_bid.showPT()
     #print(f'initial solution: {initial_solution}')
     # Itterate 20 times
-    if verbosity>9:
+    if verbosity==9:
         current_bid = copy.deepcopy(initial_bid)
 
         for a in range(20):
