@@ -42,7 +42,7 @@ def neighbor_bid(solution:SolutionModelBid):
 
 # Peforms simulated annealing to find a solution
 def simulated_annealing(initial_solution):
-    initial_temp = 50
+    initial_temp = 5
     final_temp = 1
     cooling_rate = 1
 

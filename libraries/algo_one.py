@@ -260,7 +260,7 @@ class AlgoOne:
             for csv_line in csv_content:
                 file.writelines(csv_line + '\n')
 
-        df = pd.read_csv('output/output.csv')
+        df = pd.read_csv('output.csv')
 
         # If at least one task has its duration more than 0 that indicates
         # that at least one task is not completed and therefore the schedule

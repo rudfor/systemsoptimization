@@ -33,35 +33,40 @@ if __name__ == '__main__':
         os.environ['PYTHONHASHSEED'] = args.seed
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
-    verbosity = 4
+    verbosity = args.verbosity
     # Initial Condition
     # Read CSV for Tasks
 
     # TT, ET = libs.CSVReader.get_tasks_from_csv(csv)
 
-    # Initial Condition
     initial_bid = libs.Bid(csv, args.seed, args.verbosity)
-    solution, solutions = libs.Solution.search_solution_bid(initial_bid)
-    solution.bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
-    plt.show()
+    if verbosity!=9:
+        # Initial Condition
+        solution, solutions = libs.Solution.search_solution_bid(initial_bid)
+        solution.bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
+        plt.show()
 
-    #initial_bid.showPT()
-    #print(f'initial solution: {initial_solution}')
-    # Itterate 20 times
+    # for quick plotting
     if verbosity==9:
         current_bid = copy.deepcopy(initial_bid)
 
-        for a in range(20):
+        # Itterate X times
+        for a in range(3):
             a = copy.deepcopy(current_bid.get_neighbour(5))
             current_bid = copy.deepcopy(a)
             next_bid_solution = libs.Solution.schedule_bid(a,5)
             print(f'initial solution: {next_bid_solution}')
+        Plot=False
+        #Plot
+        if Plot:
+            initial_bid.plot(f'{csv.removeprefix("resources/testcases_orig2/")}', True)
+            current_bid.plot(f'{csv.removeprefix("resources/testcases_orig2/")} [Neighbour]', True)
+        #Save to file only
+        else:
+            initial_bid.saveplot(f'{csv.removeprefix("resources/testcases_orig2/")}', True)
+            current_bid.saveplot(f'{csv.removeprefix("resources/testcases_orig2/")} [Neighbour]', True)
 
-        initial_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
-        current_bid.plot(f'{csv.removeprefix("resources/testcases_orig2")} [Neighbour]', True)
-        #next_bid.plot('NEXT', True)
-
-        plt.show()
+        #plt.show()
 
     #libs.Debug_Output.ruft_debug(initial_bid, args.plot)
 
