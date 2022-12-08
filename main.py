@@ -43,6 +43,7 @@ if __name__ == '__main__':
     initial_bid = libs.Bid(csv, args.seed, args.verbosity)
     solution, solutions = libs.Solution.search_solution_bid(initial_bid)
     solution.bid.plot(f'{csv.removeprefix("resources/testcases_orig2")}', True)
+    plt.show()
 
     #initial_bid.showPT()
     #print(f'initial solution: {initial_solution}')
